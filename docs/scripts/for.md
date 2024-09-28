@@ -11,7 +11,7 @@ As of Quest 5.1 there is an optional "step" parameter:
 
 Run a script multiple times, incrementing the iterator variable between the specified limits. If a "step" parameter is specified, the iterator variable will be incremented by that amount each time (if not specified, the default step size is 1).
 
-Trandionally, i, j, k... are used as iterator varable names. This simple example runs from 1 to 5, printing each value in turn:
+Traditionally, i, j, k... are used as iterator varable names. This simple example runs from 1 to 5, printing each value in turn:
 
     for (i, 1, 5) {
       msg(game.i)
