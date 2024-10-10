@@ -925,7 +925,7 @@
     <pattern type="string">^save$</pattern>
     <script>
       request(RequestSave, "")
-      SupressTurnscripts
+      SuppressTurnscripts
     </script>
   </command>
   
