@@ -1,0 +1,17 @@
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Quest Platform
+      description: Which version of Quest are you using (desktop or the web editor)?
+      options:
+        - Desktop
+        - WebEditor
+      default: 0
+  - type: textarea
+    id: question
+    attributes:
+      label: Ask a question
+      placeholder: Type here...
+    validations:
+      required: true
