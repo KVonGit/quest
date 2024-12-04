@@ -1,12 +1,19 @@
 <script>
   document.title = 'KVonGit - Quest | GH Pages';
+  var link = document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+  }
+  link.href = 'https://avatars.githubusercontent.com/u/30656341?v=4';
 </script>
 <center>
   <h1>KVonGit - Quest Fork | GitHub Pages</h1>
   <hr/>
   <h3>Unofficial Quest Stuff</h3>
-  <a target="_blank" href="http://kvqueststuff.texmisadventures.com">Quest Testing Central (External Website)</a><br/><hr/>
-  <a target="_blank" href="https://github.com/KVonGit/Quest5-Stuff/wiki">KVonGit/Quest5-Stuff/wiki</a><br/><br/>
+  <a target="_blank" href="http://kvqueststuff.texmisadventures.com">Quest Testing Central (External Website)</a><br/><br/>
+  <a target="_blank" href="https://github.com/KVonGit/Quest5-Stuff/wiki">KVonGit/Quest5-Stuff/wiki</a><br/><hr/>
   <h3>Official Quest Stuff</h3>
   <a target="_blank" href="https://github.com/textadventures/quest/discussions">Quest Discussions</a><br/><br/>
   <a target="_blank" href="https://github.com/textadventures/quest/issues">Quest Issues</a><br/><br/>
