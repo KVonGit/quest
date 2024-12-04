@@ -4,6 +4,12 @@
   link.rel = 'icon';
   document.head.appendChild(link);
   link.href = 'https://avatars.githubusercontent.com/u/30656341?v=4';
+  var feedLink = document.createElement('link');
+  feedLink.rel = 'alternate';
+  feedLink.type = 'application/atom+xml';
+  document.head.appendChild(feedLink);
+  feedLink.ref = 'https://github.com/textadventures/quest/discussions.atom';
+  feedLink.title = "Quest Discussions";
 </script>
 <center>
   <h1>KVonGit - Quest Fork</h1>
