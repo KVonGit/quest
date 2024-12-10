@@ -108,7 +108,7 @@ Public Class Launcher
         Integer.TryParse(updateData.Revision, latestRevision)
 
         Dim latestVersion As New Version(latestMajor, latestMinor, latestBuild, latestRevision)
-        Return latestVersion > QuestVersion
+        Return (latestVersion > QuestVersion) && (QuestVersion < 5.8.1.0001)
     End Function
 
     Public Property DownloadFolder As String
