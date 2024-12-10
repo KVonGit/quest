@@ -36,9 +36,9 @@ Public Class CefSchemeHandler
             requestCompletedCallback()
             Return True
         End If
+        
+        Return False
 
-        callback.Dispose()
-        Return CefReturnValue.Cancel
     End Function
 End Class
 
