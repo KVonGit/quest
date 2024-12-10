@@ -2,10 +2,6 @@
 var canSendCommand = true;
 var platform = "desktop";
 
-(async function () {
-    await CefSharp.BindObjectAsync("questCefInterop");
-})();
-
 function sendCommand(text, metadata) {
     markScrollPosition();
     var data = new Object();
