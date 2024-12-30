@@ -33,12 +33,18 @@
   <function name="InitInterface">
     <![CDATA[
     // Added by KV for transcript
-    // Use JSSafe to remove any offensive characters!  - KV   May 27, 2018
+    // Use JSSafe to remove any offensive characters!
     jsgamename = JSSafe(game.gamename)
     JS.eval ("var gameName = '"+jsgamename+"';var transcriptName = gameName;")
-    if (GetBoolean(game,"savetranscript")){
+    if (GetBoolean (game, "savetranscript")){
       JS.eval("var savingTranscript = true;")
-      JS.replaceTranscriptString(game.transcriptstring)
+      if (HasAttribute (game, "transcriptlist")) {
+        JS.replaceTranscriptArray (Join(game.transcriptlist, ""))
+      }
+      else if (HasAttribute (game, "transcriptstring")) {
+        // Fallback for Quest 5.8 games
+        JS.replaceTranscriptArray (Join(game.transcriptlist, ""))
+      }
     }
     // End of addition by KV for transcript
     if (game.setcustomwidth) {

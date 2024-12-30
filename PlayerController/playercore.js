@@ -629,7 +629,8 @@ function addTextAndScroll(text) {
 
 // These 2 variables added by KV for the transcript
 var savingTranscript = false;
-var transcriptString = "";
+var transcriptString = ""; /* Deprecated in 5.9 */
+var transcriptArray = [];
 
 // This function altered by KV for the transcript
 function addText(text) {
@@ -637,8 +638,10 @@ function addText(text) {
         createNewDiv("left");
     }
     if (savingTranscript) {
-        SaveTranscript(text);
-        ASLEvent("UpdateTranscriptString", text);
+        transcriptName = transcriptName || gameName;
+        SaveTranscript(transcriptName + "___SCRIPTDATA___" + text);
+        transcriptArray.push(text);
+        ASLEvent("UpdateTranscriptList", text); /* This will throw an error if the function does not exist in the game, but that shouldn't happen because this code should only run when the 5.8 transcript has been enabled. */
     }
     getCurrentDiv().append(text);
     $("#divOutput").css("min-height", $("#divOutput").height());
@@ -806,6 +809,7 @@ function showScrollback() {
             Ok: function () {
                 $(this).dialog("close");
                 $(this).remove();
+                $("#scrollbackdata, #scrollback-dialog").remove();
             },
             Print: function () {
                 printScrollbackDiv();
@@ -1347,21 +1351,24 @@ function getTimeAndDateForLog(){
 // TRANSCRIPT FUNCTIONS
 
 // This function is for loading a saved game
-function replaceTranscriptString(data) {
-    transcriptString = data;
+function replaceTranscriptString (data) {
+    // Added in 5.8, when the transcriptArray variable was a string named transcriptString
+    // Deprecated in 5.9
+    replaceTranscriptArray (data);
 }
 
+function replaceTranscriptArray (data) {
+    // Loads a string from Quest (Join(game.transcriptlist,"")) which is saved when saving progress and loaded here from InitInterface
+    transcriptArray = [];
+    transcriptArray.push(data);
+}
 function showTranscript() {
-    var transcriptDivString = "";
-    transcriptDivString += "<div ";
-    transcriptDivString += "id='transcript-dialog' ";
-    transcriptDivString += "style='display:none;'>";
-    transcriptDivString += "<div id='transcriptdata'></div></div>";
+    var transcriptDivString = '<div id="transcript-dialog" style="display:none;"><div id="transcriptdata"></div></div>';
     addText(transcriptDivString);
     var transcriptDialog = $("#transcript-dialog").dialog({
         autoOpen: false,
-        width: 600,
-        height: 500,
+        width: $(window).width(),
+        height: $(window).height(),
         title: "Transcript",
         buttons: {
             Ok: function () {
@@ -1372,12 +1379,13 @@ function showTranscript() {
                 printTranscriptDiv();
                 $(this).dialog("close");
                 $(this).remove();
+                $("#transcriptdata, #transcript-dialog").remove();
             },
         },
         show: { effect: "fadeIn", duration: 500 },
         modal: true,
     });
-    $('#transcriptdata').html(transcriptString);
+    $('#transcriptdata').html(transcriptArray.join(""));
     $("#transcriptdata a").addClass("disabled");
     transcriptDialog.dialog("open");
     setTimeout(function () {

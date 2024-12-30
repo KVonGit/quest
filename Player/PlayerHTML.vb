@@ -125,19 +125,35 @@ Public Class PlayerHTML
         My.Computer.FileSystem.WriteAllText(logPath + "\" + gameName + "-log.txt", data + Environment.NewLine, True)
     End Sub
     Private Sub SaveTranscript(data As String)
-        Dim mgameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
-        mgameName = mgameName.Replace(".aslx", "")
+        Dim mgameName = ""
+        Dim scriptname = "DEFAULT_"
+        ' In playercore.js: SaveTranscript (transcriptName + "___SCRIPTDATA___" + text)
+        ' If SaveTranscript(text) is used, this will ignore the transcript name and use the game's file name.
+        If data.Contains("___SCRIPTDATA___") Then
+            scriptname = Split(data, "___SCRIPTDATA___")(0)
+        End If
+        If scriptname = "DEFAULT_" Then
+          mgameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
+          mgameName = mgameName.Replace(".aslx", "")
+        Else
+          mgameName = scriptname
+        End If
         Dim transcriptPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest Transcripts"
         If Not System.IO.Directory.Exists(transcriptPath) = True Then
             System.IO.Directory.CreateDirectory(transcriptPath)
         End If
-        If Not System.IO.File.Exists(transcriptPath + "\" + mgameName + "-transcript.html") = True Then
+        If Not System.IO.File.Exists(transcriptPath + "\" + mgameName + "-transcript.html") = True Or data.Contains("@@@OVERWRITEFILE@@@") Then
             Dim file As System.IO.FileStream
             file = System.IO.File.Create(transcriptPath + "\" + mgameName + "-transcript.html")
             file.Close()
+            If data.Contains("@@@OVERWRITEFILE@@@") Then
+                data = Replace(data, "@@@OVERWRITEFILE@@@", "")
+            End If
         End If
-        My.Computer.FileSystem.WriteAllText(transcriptPath + "\" + mgameName + "-transcript.html", data, True)
-
+        If data.Contains("___SCRIPTDATA___") Then
+            data = Split(data, "___SCRIPTDATA___")(1)
+        End If
+        My.Computer.FileSystem.WriteAllText(transcriptPath + "\" + mgameName + "-transcript.html", Replace(data, "@@@NEW_LINE@@@", Environment.NewLine), True)
     End Sub
     Private Sub RestartGame(data As String)
         m_keyHandler_KeyPressed(131154)

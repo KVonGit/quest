@@ -964,7 +964,7 @@
       else {
         msg ("This game has no transcript feature.")
       }
-      game.suppressturnscripts = true
+      SuppressTurnscripts
     </script>
   </command>
 
@@ -976,9 +976,9 @@
           msg ("Please enter a filename.  (<b>  \"-transcript.html\" will be appended to this filename.)<br/>  <i>(The file will be saved in \"Documents\\Quest Transcripts\".)</i></b>")
           JS.eval ("$('input#txtCommand').val(transcriptName);")
           get input {
-            filename = Trim(result)
+            filename = GetWindowsSafeName(Trim(result))
             if (not filename = "") {
-              JS.eval ("transcriptName = '"+filename+"';")
+              JS.eval ("transcriptName = '" + filename + "';")
             }
             JS.eval ("savingTranscript = true;")
             game.savetranscript = true
@@ -989,11 +989,8 @@
             }
             s = s + "<b>VERSION: </b>" + game.version + "<br/>"
             s = s + "<b>IFID: </b>" + game.gameid + "<br/>"
-            s = s + "<br/>"
             s = pre + s
-            msg("")
             msg (s)
-            msg ("<br/><b><i>[  Enter </i>SCRIPT OFF<i> to disable the transcript.  ]</i></b>")
           }
         }
         else {
@@ -1003,7 +1000,7 @@
       else {
         msg ("This game has no transcript feature.")
       }
-      game.suppressturnscripts = true
+      SuppressTurnscripts
     ]]>
     </script>
   </command>
@@ -1027,11 +1024,6 @@
     </script>
   </command>
 
-  <function name="UpdateTranscriptString" parameters="data">
-    game.suppressturnscripts = true
-    game.transcriptstring = game.transcriptstring + data
-  </function>
-  
   <command name="restart" pattern="^restart$">
     <script>
       Ask (Template("WantRestartGame")){

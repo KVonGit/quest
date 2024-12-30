@@ -263,3 +263,7 @@ function saveGameResponse(data) {
 function WriteToLog(data){
   // Do nothing.
 }
+
+function SaveTranscript(data){
+  // Do nothing.
+}

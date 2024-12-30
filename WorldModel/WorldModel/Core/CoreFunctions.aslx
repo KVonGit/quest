@@ -619,6 +619,35 @@
     JS.eval("savingTranscript = false;")
   </function>
   
+  <function name="UpdateTranscriptString" parameters="data">
+    // Added in 5.8
+    // Deprecated in 5.9
+    // Send data to UpdateTranscriptList as a fallback
+    UpdateTranscriptList (data)
+  </function>
+  
+  <function name="UpdateTranscriptList" parameters="data">
+    if (not HasAttribute (game, "transcriptlist")) {
+      game.transcriptlist = NewStringList()
+    }
+    list add (game.transcriptlist, data)
+  </function>
+
+  <function name="GetWindowsSafeName" parameters="dirty" type="string"><![CDATA[
+    if (StartsWith(dirty, ".")) {
+      dirty = Mid (dirty, 2, LengthOf (dirty) -1)
+    }
+    clean = Trim(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(dirty, "\"", "''"), "<", "_"), ">", "_"), ":", "_"), "/", "_"), "\\", "_"), "|", "_"), "?", "_"), "*", "_"))
+    changed_something = false
+    if (not clean = dirty) {
+      changed_something = true
+    }
+    if (StartsWith(clean, ".")) {
+      clean = GetWindowsSafeName(clean)
+    }
+    return (clean)
+  ]]></function>
+  
   <function name="DisableHtmlLog">
     game.nohtmllog = true
   </function>
