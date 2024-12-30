@@ -43,7 +43,7 @@
       }
       else if (HasAttribute (game, "transcriptstring")) {
         // Fallback for Quest 5.8 games
-        JS.replaceTranscriptArray (Join(game.transcriptlist, ""))
+        JS.replaceTranscriptArray (game.transcriptstring)
       }
     }
     // End of addition by KV for transcript
