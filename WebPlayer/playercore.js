@@ -641,7 +641,7 @@ function addText(text) {
         transcriptName = transcriptName || gameName;
         SaveTranscript(transcriptName + "___SCRIPTDATA___" + text);
         transcriptArray.push(text);
-        ASLEvent("UpdateTranscriptList", text); /* This will throw an error if the function does not exist in the game, but that shouldn't happen because this code should only run when the 5.8 transcript has been enabled. */
+        ASLEvent("UpdateTranscriptList", text.replaceAll("<","@@@_REPLACE_LT_@@@")); /* This will throw an error if the function does not exist in the game, but that shouldn't happen because this code should only run when the 5.8 transcript has been enabled. */
     }
     getCurrentDiv().append(text);
     $("#divOutput").css("min-height", $("#divOutput").height());
@@ -1360,15 +1360,17 @@ function replaceTranscriptString (data) {
 function replaceTranscriptArray (data) {
     // Loads a string from Quest (Join(game.transcriptlist,"")) which is saved when saving progress and loaded here from InitInterface
     transcriptArray = [];
-    transcriptArray.push(data);
+    transcriptArray.push(data.replaceAll("@@@_REPLACE_LT_@@@", "<"));
 }
 function showTranscript() {
     var transcriptDivString = '<div id="transcript-dialog" style="display:none;"><div id="transcriptdata"></div></div>';
     addText(transcriptDivString);
     var transcriptDialog = $("#transcript-dialog").dialog({
         autoOpen: false,
-        width: $(window).width(),
-        height: $(window).height(),
+        width: (window.innerWidth || document.documentElement.clientWidth || 
+document.body.clientWidth) - 100,
+        height: (window.innerHeight|| document.documentElement.clientHeight|| 
+document.body.clientHeight) - 100,
         title: "Transcript",
         buttons: {
             Ok: function () {
