@@ -453,6 +453,7 @@ Public Class LegacyGame
     Private _fileData As String
     Private _fileDataPos As Integer
     Private _questionResponse As Boolean
+    Private _panesDisabled As Boolean
 
     Public Sub New(filename As String, originalFilename As String)
         _tempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath, "Quest", Guid.NewGuid().ToString())
@@ -4851,6 +4852,7 @@ Public Class LegacyGame
         If block.StartLine = 0 And block.EndLine = 0 Then
             LogASLError("No such procedure " & procedureName, LogType.WarningError)
         Else
+            'LogASLError("Executing procedure " & procedureName)
             For i = block.StartLine + 1 To block.EndLine - 1
                 If Not useNewCtx Then
                     ExecuteScript(_lines(i), ctx)
@@ -6492,7 +6494,23 @@ Public Class LegacyGame
         _playerErrorMessageString(PlayerError.DefaultWait) = "Press a key to continue..."
         _playerErrorMessageString(PlayerError.AlreadyTaken) = "You already have that."
     End Sub
-
+    
+    Private Sub RequestJS (js As String)
+        _player.RunScript(js.Split("`"c)(0), {js.Split("`"c)(1)})
+    End Sub
+    
+    Private Sub JsEval (args As String)
+        _player.RunScript("eval", {args})
+    End Sub
+    
+    Private Sub JsSet (varval As String)
+        _player.RunScript("eval", {"" + varval.Split("`"c)(0) + " = " + varval.Split("`"c)(1) + ""})
+    End Sub
+    
+    Private Sub JsCall (funcargs As String)
+        _player.RunScript("eval", {"" + funcargs.Split(";"c)(0) + "(" + funcargs.Split(";"c)(1) + ")"})
+    End Sub
+    
     Private Sub SetFont(name As String)
         If name = "" Then name = _defaultFontName
         _player.SetFont(name)
@@ -7311,6 +7329,12 @@ Public Class LegacyGame
             _player.SetPanelContents("<img src=""" + _player.GetURL(filename) + """ onload=""setPanelHeight()""/>")
         End If
     End Sub
+    
+    Private Sub ShowStaticPicture(filename As String)
+            ' For 211 & 420 games which expect pictures to be in a popup window -
+            ' use the static picture frame feature so that image is not cleared
+            _player.SetPanelContents("<img src=""" + _player.GetURL(filename) + """ onload=""setPanelHeight()""/>")
+    End Sub
 
     Private Sub ShowRoomInfoV2(room As String)
         ' ShowRoomInfo for Quest 2.x games
@@ -7668,8 +7692,10 @@ Public Class LegacyGame
         If type = Thing.Room Then
             objList.Add(New ListData(name, _listVerbs(ListType.ExitsList)))
             exitList.Add(New ListData(name, _listVerbs(ListType.ExitsList)))
+        Else If type = Thing.Character Then
+            objList.Add(New ListData(name, New List(Of String)(New String() {"Examine", "Speak To"})))
         Else
-            objList.Add(New ListData(name, _listVerbs(ListType.ObjectsList)))
+            objList.Add(New ListData(name,  New List(Of String)(New String() {"Examine", "Take"})))
         End If
     End Sub
 
@@ -8586,7 +8612,7 @@ Public Class LegacyGame
                                     AddObjectAction(_numberObjs, "examine", restOfLine)
                                 End If
                             End If
-                        ElseIf _gameAslVersion >= 311 And BeginsWith(_lines(j), "speak ") Then
+                        ElseIf (_gameAslVersion = 211 Or _gameAslVersion >= 311)  And BeginsWith(_lines(j), "speak ") Then
                             restOfLine = GetEverythingAfter(_lines(j), "speak ")
                             If Left(restOfLine, 1) = "<" Then
                                 AddToObjectProperties("speak=" & GetParameter(_lines(j), _nullContext), _numberObjs, _nullContext)
@@ -9273,9 +9299,14 @@ Public Class LegacyGame
             ElseIf CmdStartsWith(input, "take ") Then
                 parameter = GetEverythingAfter(input, "take ")
                 ExecTake(parameter, ctx)
-            ElseIf CmdStartsWith(input, "drop ") And _gameAslVersion >= 280 Then
-                parameter = GetEverythingAfter(input, "drop ")
-                ExecDrop(parameter, ctx)
+            ElseIf CmdStartsWith(input, "drop ") Then
+                If _gameAslVersion >= 280 Then
+                    parameter = GetEverythingAfter(input, "drop ")
+                    ExecDrop(parameter, ctx)
+                Else
+                    PlayerErrorMessage(PlayerError.BadCommand, ctx)
+                    DoPrint("(This version of Quest (ASL Version " & _gameAslVersion & ") did not have a DROP command.)")
+                End If
             ElseIf CmdStartsWith(input, "get ") Then
                 parameter = GetEverythingAfter(input, "get ")
                 ExecTake(parameter, ctx)
@@ -9333,6 +9364,7 @@ Public Class LegacyGame
                     Print(logEntry, ctx)
                 Next
             ElseIf cmd = "inventory" Or cmd = "inv" Or cmd = "i" Then
+                Dim handled = False
                 If _gameAslVersion >= 280 Then
                     For i = 1 To _numberObjs
                         If _objs(i).ContainerRoom = "inventory" And _objs(i).Exists And _objs(i).Visible Then
@@ -9352,30 +9384,35 @@ Public Class LegacyGame
                         End If
                     Next i
                 Else
-                    For j = 1 To _numberItems
-                        If _items(j).Got = True Then
-                            invList = invList & _items(j).Name & ", "
-                        End If
-                    Next j
+                    'For j = 1 To _numberItems
+                    '    If _items(j).Got = True Then
+                    '        invList = invList & _items(j).Name & ", "
+                    '    End If
+                    'Next j
+                    handled = True
+                    PlayerErrorMessage(PlayerError.BadCommand, ctx)
+                    DoPrint("(This version of Quest (ASL Version " & _gameAslVersion & ") did not have an INVENTORY command.)")
                 End If
-                If invList <> "" Then
+                If handled = False Then
+                    If invList <> "" Then
 
-                    invList = Left(invList, Len(invList) - 2)
-                    invList = UCase(Left(invList, 1)) & Mid(invList, 2)
+                        invList = Left(invList, Len(invList) - 2)
+                        invList = UCase(Left(invList, 1)) & Mid(invList, 2)
 
-                    Dim pos = 1
-                    Dim lastComma, thisComma As Integer
-                    Do
-                        thisComma = InStr(pos, invList, ",")
-                        If thisComma <> 0 Then
-                            lastComma = thisComma
-                            pos = thisComma + 1
-                        End If
-                    Loop Until thisComma = 0
-                    If lastComma <> 0 Then invList = Left(invList, lastComma - 1) & " and" & Mid(invList, lastComma + 1)
-                    Print("You are carrying:|n" & invList & ".", ctx)
-                Else
-                    Print("You are not carrying anything.", ctx)
+                        Dim pos = 1
+                        Dim lastComma, thisComma As Integer
+                        Do
+                            thisComma = InStr(pos, invList, ",")
+                            If thisComma <> 0 Then
+                                lastComma = thisComma
+                                pos = thisComma + 1
+                            End If
+                        Loop Until thisComma = 0
+                        If lastComma <> 0 Then invList = Left(invList, lastComma - 1) & " and" & Mid(invList, lastComma + 1)
+                        Print("You are carrying:|n" & invList & ".", ctx)
+                    Else
+                        Print("You are not carrying anything.", ctx)
+                    End If
                 End If
             ElseIf CmdStartsWith(input, "oops ") Then
                 ExecOops(GetEverythingAfter(input, "oops "), ctx)
@@ -9403,6 +9440,17 @@ Public Class LegacyGame
 
             ' was set to NullThread here for some reason
             If _afterTurnScript <> "" And globalOverride = False Then ExecuteScript(_afterTurnScript, ctx)
+        End If
+        
+        If _gameAslVersion < 280 Then
+        'update items list quest.items
+        invList = ""
+        For j = 1 To _numberItems
+            If _items(j).Got = True Then
+                invList = invList & _items(j).Name & ", "
+            End If
+        Next j
+        SetStringContents("quest.items", invList, ctx)
         End If
 
         Print("", ctx)
@@ -10285,12 +10333,16 @@ Public Class LegacyGame
                 PlayMedia(GetParameter(scriptLine, ctx))
             ElseIf BeginsWith(scriptLine, "playmp3 ") Then
                 PlayMedia(GetParameter(scriptLine, ctx))
+            ElseIf BeginsWith(scriptLine, "playogg ") Then
+                PlayMedia(GetParameter(scriptLine, ctx))
             ElseIf Trim(LCase(scriptLine)) = "picture close" Then
                 ' This command does nothing in the Quest 5 player, as there is no separate picture window
             ElseIf (_gameAslVersion >= 390 And BeginsWith(scriptLine, "picture popup ")) Or (_gameAslVersion >= 282 And _gameAslVersion < 390 And BeginsWith(scriptLine, "picture ")) Or (_gameAslVersion < 282 And BeginsWith(scriptLine, "show ")) Then
                 ShowPicture(GetParameter(scriptLine, ctx))
             ElseIf (_gameAslVersion >= 390 And BeginsWith(scriptLine, "picture ")) Then
                 ShowPictureInText(GetParameter(scriptLine, ctx))
+            ElseIf ((_gameAslVersion = 211 Or _gameAslVersion = 420) And (BeginsWith(scriptLine, "picturestatic "))) Then
+                ShowStaticPicture(GetParameter(scriptLine, ctx))
             ElseIf BeginsWith(scriptLine, "animate persist ") Then
                 ShowPicture(GetParameter(scriptLine, ctx))
             ElseIf BeginsWith(scriptLine, "animate ") Then
@@ -10383,14 +10435,33 @@ Public Class LegacyGame
                 LogASLError(GetParameter(scriptLine, ctx), LogType.Misc)
             ElseIf BeginsWith(scriptLine, "mailto ") Then
                 Dim emailAddress As String = GetParameter(scriptLine, ctx)
-                ' TODO: Just write HTML directly
+                ' TODO: Just write HTML directly -[X] Done. - 30 Jan, 2025
                 '<NOCONVERT
-                RaiseEvent PrintText("<a target=""_blank"" href=""mailto:" + emailAddress + """>" + emailAddress + "</a>")
+                _player.WriteHTML("<a target=""_blank"" href=""mailto:" + emailAddress + """>" + emailAddress + "</a>")
                 'NOCONVERT>
-            ElseIf BeginsWith(scriptLine, "shell ") And _gameAslVersion < 410 Then
-                LogASLError("'shell' is not supported in this version of Quest", LogType.WarningError)
-            ElseIf BeginsWith(scriptLine, "shellexe ") And _gameAslVersion < 410 Then
-                LogASLError("'shellexe' is not supported in this version of Quest", LogType.WarningError)
+            ElseIf BeginsWith(scriptLine, "cmdlink ") Then
+                Dim cmd As String = GetParameter(scriptLine, ctx)
+                RaiseEvent PrintText("<a class=""cmdlink"" onclick=""sendCommand('" + cmd + "');"">" + cmd + "</a>")
+            ElseIf BeginsWith(scriptLine, "requestjs ") Then
+                RequestJS(GetParameter(scriptLine, ctx, False))
+            ElseIf BeginsWith(scriptLine, "jseval ") Then
+                JsEval(GetParameter(scriptLine, ctx))
+            ElseIf BeginsWith(scriptLine, "jsset ") Then
+                JsSet(GetParameter(scriptLine, ctx))
+            ElseIf BeginsWith(scriptLine, "jscall ") Then
+                JsCall(GetParameter(scriptLine, ctx))
+            ElseIf BeginsWith(scriptLine, "shell ") Then
+                If _gameAslVersion = 211 Or _gameAslVersion = 420 Then
+                    ShellExecute(GetParameter(scriptLine, ctx))
+                Else
+                    LogASLError("'shell' is not supported in this version of Quest", LogType.WarningError)
+                End If
+            ElseIf BeginsWith(scriptLine, "shellexe ") Then
+                If _gameAslVersion = 211 Or _gameAslVersion = 420 Then
+                    ShellExecute(GetParameter(scriptLine, ctx))
+                Else
+                    LogASLError("'shell' is not supported in this version of Quest", LogType.WarningError)
+                End If
             ElseIf BeginsWith(scriptLine, "wait") Then
                 ExecuteWait(Trim(GetEverythingAfter(Trim(scriptLine), "wait")), ctx)
             ElseIf BeginsWith(scriptLine, "timeron ") Then
@@ -10406,7 +10477,12 @@ Public Class LegacyGame
             ElseIf Trim(LCase(scriptLine)) = "panes off" Then
                 _player.SetPanesVisible("off")
             ElseIf Trim(LCase(scriptLine)) = "panes on" Then
-                _player.SetPanesVisible("on")
+                If Not _panesDisabled Then
+                  _player.SetPanesVisible("on")
+                End If
+            ElseIf Trim(LCase(scriptLine)) = "panes disabled" Then
+                _player.SetPanesVisible("off")
+                _panesDisabled = True
             ElseIf BeginsWith(scriptLine, "lock ") Then
                 ExecuteLock(GetParameter(scriptLine, ctx), True)
             ElseIf BeginsWith(scriptLine, "unlock ") Then
@@ -10709,7 +10785,7 @@ Public Class LegacyGame
         Else
             _gameAslVersion = CInt(aslVersion)
 
-            Dim recognisedVersions = "/100/200/210/217/280/281/282/283/284/285/300/310/311/320/350/390/391/392/400/410/"
+            Dim recognisedVersions = "/100/200/210/211/217/280/281/282/283/284/285/300/310/311/320/350/390/391/392/400/410/420/"
 
             If InStr(recognisedVersions, "/" & aslVersion & "/") = 0 Then
                 LogASLError("Unrecognised ASL version number.", LogType.WarningError)
@@ -10718,7 +10794,10 @@ Public Class LegacyGame
 
         _listVerbs.Add(ListType.ExitsList, New List(Of String)(New String() {"Go to"}))
 
-        If _gameAslVersion >= 280 And _gameAslVersion < 390 Then
+        If _gameAslVersion = 420 Then
+            _listVerbs.Add(ListType.ObjectsList, New List(Of String)(New String() {"Examine"}))
+            _listVerbs.Add(ListType.InventoryList, New List(Of String)(New String() {"Examine", "Drop"}))
+        Else If _gameAslVersion >= 280 And _gameAslVersion < 390 Then
             _listVerbs.Add(ListType.ObjectsList, New List(Of String)(New String() {"Look at", "Examine", "Take", "Speak to"}))
             _listVerbs.Add(ListType.InventoryList, New List(Of String)(New String() {"Look at", "Examine", "Use", "Drop"}))
         Else
@@ -10758,6 +10837,7 @@ Public Class LegacyGame
             ' Set up an array containing the names of all the items
             ' used in the game, based on the possitems statement
             ' of the 'define game' block.
+            
             SetUpItemArrays()
         End If
 
@@ -10930,7 +11010,8 @@ Public Class LegacyGame
     End Sub
 
     Friend Sub Print(txt As String, ctx As Context)
-        If Not _outPutOn Then
+        If Not _outPutOn Then 
+            LogASLError(Date.Now.ToString() & " - PRINT: Text not printed because outputoff is true:" & vbCrLf & "'" & txt & "'")
             Exit Sub
         End If
         Dim printString = ""
@@ -11146,6 +11227,7 @@ Public Class LegacyGame
                 Dim startItems = GetParameter(_lines(a), _nullContext)
 
                 If startItems <> "" Then
+                    SetStringContents("quest.items", startItems, _nullContext)
                     Dim pos = 1
                     Do
                         Dim nextComma = InStr(pos + 1, startItems, ",")
@@ -11182,17 +11264,21 @@ Public Class LegacyGame
     End Sub
 
     Private Sub ShowHelp(ctx As Context)
-        ' In Quest 4 and below, the help text displays in a separate window. In Quest 5, it displays
-        ' in the same window as the game text.
-        Print("|b|cl|s14Quest Quick Help|xb|cb|s00", ctx)
-        Print("", ctx)
-        Print("|cl|bMoving|xb|cb Press the direction buttons in the 'Compass' pane, or type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xn", ctx)
-        Print("To go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n", ctx)
-        Print("|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n", ctx)
-        Print("|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n", ctx)
-        Print("|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game. The next turn after referring to an object or character, you can use |bIT|xb, |bHIM|xb etc. as appropriate to refer to it/him/etc. again. If you make a mistake when typing an object's name, type |bOOPS|xb followed by your correction.|n", ctx)
-        Print("|cl|bKeyboard shortcuts|xb|cb Press the |crup arrow|cb and |crdown arrow|cb to scroll through commands you have already typed in. Press |crEsc|cb to clear the command box.|n|n", ctx)
-        Print("Further information is available by selecting |iQuest Documentation|xi from the |iHelp|xi menu.", ctx)
+        If _gameAslVersion >= 280 Then
+          ' In Quest 4 and below, the help text displays in a separate window. In Quest 5, it displays
+          ' in the same window as the game text.
+          Print("|b|cl|s14Quest Quick Help|xb|cb|s00", ctx)
+          Print("", ctx)
+          Print("|cl|bMoving|xb|cb Press the direction buttons in the 'Compass' pane, or type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xn", ctx)
+          Print("To go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n", ctx)
+          Print("|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n", ctx)
+          Print("|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n", ctx)
+          Print("|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game. The next turn after referring to an object or character, you can use |bIT|xb, |bHIM|xb etc. as appropriate to refer to it/him/etc. again. If you make a mistake when typing an object's name, type |bOOPS|xb followed by your correction.|n", ctx)
+          Print("|cl|bKeyboard shortcuts|xb|cb Press the |crup arrow|cb and |crdown arrow|cb to scroll through commands you have already typed in. Press |crEsc|cb to clear the command box.|n|n", ctx)
+          Print("Further information is available by selecting |iQuest Documentation|xi from the |iHelp|xi menu.", ctx)
+      Else
+          _player.WriteHTML("<center>-=-<h1 style=""color:blue;"">USING QUEST:</h1><div style=""font-family:" & _defaultFontName & "; font-size: " & _defaultFontSize & "pt;""><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc., or just type <b>N, S, E</b> or <b>W</b>.</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> et� To go into a place, type <b>GO TO ...</b> . To leave a place, type <b>OUT, EXIT</b> or <b>LEAVE</b>, or press the '<font color=red>OUT</font>' button.</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> et� You can interact with people and objects using <b>TAKE ...; GIVE ... TO ...; TALK/SPEAK TO ...; USE ... ON/WITH ...; LOOK [AT ...];</b> plus several others - just use your common sense!</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> et� You can type <b>QUIT</b> to leave Quest.</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> et� Type <b>ABOUT</b> to get information on the current game.</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> et� Press the <font color=red>up arrow</font> to bring up the last command you typed (if you made a mistake and want to edit it); press <font color=red>Esc</font> to clear it.</p><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc.</p>-=-<br/></div></center>")
+      End If
     End Sub
 
     Private Sub ReadCatalog(data As String)
@@ -11439,7 +11525,7 @@ Public Class LegacyGame
         Else
             For j = 1 To _numberItems
                 If _items(j).Got = True Then
-                    invList.Add(New ListData(CapFirst(_items(j).Name), _listVerbs(ListType.InventoryList)))
+                    invList.Add(New ListData(CapFirst(_items(j).Name), New List(Of String)(New String() {})))
                 End If
             Next j
         End If
@@ -11499,7 +11585,7 @@ Public Class LegacyGame
         roomBlock = DefineBlockParam("room", _currentRoom)
 
         'FIND CHARACTERS ===
-        If _gameAslVersion < 281 Then
+        If _gameAslVersion < 281 Or _gameAslVersion = 420 Then
             ' go through Chars() array
             For i = 1 To _numberChars
                 If _chars(i).ContainerRoom = _currentRoom And _chars(i).Exists And _chars(i).Visible Then
@@ -11926,6 +12012,30 @@ Public Class LegacyGame
                     ctx = _nullContext
                     ExecuteScript(Trim(GetEverythingAfter(Trim(_lines(i)), "lib startscript ")), ctx)
                 End If
+                ' If this is a multiplayer game, run the player startscript too!
+                If BeginsWith(_lines(i), "player startscript ") Then
+                    'MessageBox.Show("This game is designed for the QuestNet Server. It may not work correctly as a single-player game.", "QuestNet Game")
+                    Dim prompt As String = "This game is designed for the QuestNet Server. It may not work correctly as a single-player game."
+                    Dim menuOptions As New Dictionary(Of String, String)
+                    Dim menuScript As New Dictionary(Of String, String)
+                    menuOptions.Add("OK", "OK")
+                    menuScript.Add("OK", "debug <OK>")
+                    Dim mnu As New MenuData(prompt, menuOptions, False)
+                    Dim choice As String = ShowMenu(mnu)
+                    Print("|n|s13|crThis game is designed for the QuestNet Server.|nIt may not work correctly as a single-player game.|cb|s00|n", _nullContext)
+                    ctx = _nullContext
+                    ExecuteScript(Trim(GetEverythingAfter(Trim(_lines(i)), "player startscript")), ctx)
+                    ' TODO - Set userid to 0
+                    ' TODO - create 'name' function
+                    'ERROR: No numeric variable 'userid' defined.
+                    'ERROR: No such function 'name'
+                    'ERROR: No numeric variable 'userid' defined.
+                    'ERROR: Error setting variable 'money' to '42'
+                    'ERROR: No numeric variable 'userid' defined.
+                    'ERROR: No such function 'name'
+                    'ERROR: No numeric variable 'userid' defined.
+                    'ERROR: No such function 'name'
+                End If
             Next i
 
         End If
@@ -11961,6 +12071,11 @@ Public Class LegacyGame
                 ExecuteScript(_onLoadScript, ctx)
             End If
 
+        End If
+        
+        If _gameAslVersion < 280 Then
+            ' set inventory pane label to "items"!
+            JsCall("setInterfaceString;'InventoryLabel','Items'")
         End If
 
         RaiseNextTimerTickRequest()
@@ -12068,8 +12183,48 @@ Public Class LegacyGame
 
     '<NOCONVERT
     Public Sub SendEvent(eventName As String, param As String) Implements IASL.SendEvent
-
+        LogASLError("Running SendEvent: " + eventName + " ; " + param + "")
+        Dim ctx = _nullContext
+        If param <> "" Then
+            ctx.Parameters = param.Split({";"c})
+            ctx.NumParameters = ctx.Parameters.Length
+        End If
+        ExecuteDo(eventName, ctx)
     End Sub
+    
+    Private Sub RunASLEvent(data As String)
+        LogASLError("Running RunASLEvent: " + data + "")
+        Dim args As String() = data.Split({";"c}, 2)
+        SendEvent(args(0), args(1))
+    End Sub
+    
+    Private Sub UIEvent(cmd As String, args As String)
+        LogASLError("Running UIEvent: " + cmd + " ; " + args + "")
+        Select Case cmd
+            Case "ASLEvent"
+                RunASLEvent(args)
+            Case "RestartGame"
+                DoClear()
+                DoBegin()
+            'Case "SaveTranscript"
+                ' Deprecated in 5.9
+                'WriteToTranscript(args)
+            'Case "WriteToTranscript"
+                'WriteToTranscript(args)
+        End Select
+    End Sub
+    
+    Private Function ShellExecute(ByVal File As String) As Boolean
+        Dim myProcess As New Process
+        myProcess.StartInfo.FileName = _gamePath & File
+        LogASLError("ShellExecute: " &  myProcess.StartInfo.FileName & "")
+        Print("Opening " &  myProcess.StartInfo.FileName & "", _nullContext)
+        myProcess.StartInfo.UseShellExecute = True
+        myProcess.StartInfo.RedirectStandardOutput = False
+        myProcess.Start()
+        myProcess.Dispose()
+    End Function
+
 
     Public Event UpdateList(listType As ListType, items As System.Collections.Generic.List(Of ListData)) Implements IASL.UpdateList
     'NOCONVERT>
@@ -12311,6 +12466,7 @@ Public Class LegacyGame
         RaiseEvent LogError(ex.Message + Environment.NewLine + ex.StackTrace)
     End Sub
 
+    
     Public Function GetExternalScripts() As IEnumerable(Of String) Implements IASL.GetExternalScripts
         Return Nothing
     End Function
