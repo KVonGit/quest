@@ -5,8 +5,6 @@
 AppName=Quest
 AppVersion={#QuestVersion}
 AppVerName=Quest {#QuestVersion}
-ArchitecturesAllowed=x64compatible
-ArchitecturesInstallIn64BitMode=x64compatible
 AppCopyright=Copyright © 2024 Alex Warren, Andy Joel and contributors
 VersionInfoVersion={#QuestVersion}
 AppPublisher=Alex Warren
@@ -40,7 +38,7 @@ Name: "{group}\Quest"; Filename: "{app}\Quest.exe"
 Name: "{autodesktop}\Quest"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
 
 [Run]
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."
 Filename: "{app}\Quest.exe"; Description: "Launch Quest"; Flags: nowait postinstall skipifsilent
 
 [Registry]
