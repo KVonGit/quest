@@ -40,6 +40,15 @@ Friend Class WalkthroughRunner
                         WriteLine("<span style=""color:red""><b>Failed</b></span>")
                         Return
                     End If
+                ElseIf cmd.StartsWith("asserttest:") Then
+                    Dim expr As String = cmd.Substring(7)
+                    WriteLine("<br/><b>Assert:</b> " + expr)
+                    If m_gameDebug.Assert(expr) Then
+                        WriteLine("<span style=""color:green""><b>Pass</b></span>")
+                    Else
+                        WriteLine("<span style=""color:red""><b>Failed</b></span>")
+                        'Return
+                    End If    
                 ElseIf cmd.StartsWith("label:") Then
                     ' ignore
                 ElseIf cmd.StartsWith("delay:") Then

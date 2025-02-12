@@ -12,8 +12,8 @@ AppPublisherURL=https://textadventures.co.uk/
 AppSupportURL=https://textadventures.co.uk/help
 AppUpdatesURL=https://textadventures.co.uk/quest/desktop
 OutputBaseFilename=quest{#SetupVersion}
-DefaultGroupName=Quest
-DefaultDirName={autopf}\Quest 5
+DefaultGroupName=Quest59
+DefaultDirName={autopf}\Quest 59
 UninstallDisplayIcon={app}\Quest.exe
 OutputDir=bin
 SourceDir=.
@@ -27,15 +27,15 @@ UsePreviousSetupType=no
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\Quest\bin\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml,\x86\*"; DestDir: "{app}"; Flags: recursesubdirs
-Source: "..\Dependencies\VC_redist.x64.exe"; DestDir: "{tmp}"
+Source: "..\Quest\bin\x86\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\Dependencies\VC_redist.x86.exe"; DestDir: "{tmp}"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Icons]
-Name: "{group}\Quest"; Filename: "{app}\Quest.exe"
-Name: "{autodesktop}\Quest"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
+Name: "{group}\Quest59"; Filename: "{app}\Quest.exe"
+Name: "{autodesktop}\Quest 5.9"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
 
 [Run]
 Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."

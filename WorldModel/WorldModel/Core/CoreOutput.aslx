@@ -878,10 +878,10 @@
       text = "[" + TypeOf(text) + "]"
     }
     request (Log, text)
-    if (GetBoolean(game, "writelogtofile")){
+    //if (GetBoolean(game, "writelogtofile")){
       text = Replace(text, "\"", "''")
       JS.WriteToLog(text)
-    }
+    //}
     ]]>
   </function>
 

@@ -50,12 +50,12 @@ Public Class PlayerHTML
         settings.RootCachePath = tempRootCachePath
 
         AddHandler AppDomain.CurrentDomain.ProcessExit, Sub(s, evt)
-                                                            Try
-                                                                Directory.Delete(tempRootCachePath, True)
-                                                            Catch
-                                                                ' Ignore failures
-                                                            End Try
-                                                        End Sub
+            Try
+                Directory.Delete(tempRootCachePath, True)
+            Catch
+                ' Ignore failures
+            End Try
+        End Sub
 
         Cef.Initialize(settings)
 
@@ -132,12 +132,10 @@ Public Class PlayerHTML
         End Select
     End Sub
     Private Sub WriteToLog(data As String)
-        Dim logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest Logs"
+        'Dim logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest Logs"
         Dim gameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
         gameName = gameName.Replace(".aslx", "")
-        If Not System.IO.Directory.Exists(logPath) = True Then
-            System.IO.Directory.CreateDirectory(logPath)
-        End If
+        Dim logPath = CurrentGame.Filename.Replace(Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1), "")
         If Not System.IO.File.Exists(logPath + "\" + gameName + "-log.txt") = True Then
             Dim file As System.IO.FileStream
             file = System.IO.File.Create(logPath + "\" + gameName + "-log.txt")
@@ -195,7 +193,7 @@ Public Class PlayerHTML
     End Sub
 
     Private Sub GoURL(data As String)
-        If data.StartsWith("http://") Or data.StartsWith("https://") Or data.StartsWith("mailto:") Then
+        If data.StartsWith("http://") Or data.StartsWith("https://") Or data.StartsWith("file://") Or data.StartsWith("mailto:") Then
             System.Diagnostics.Process.Start(data)
         End If
     End Sub
