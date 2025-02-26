@@ -1,6 +1,18 @@
 ﻿var webPlayer = false;
 var canSendCommand = true;
 
+// Disables backspace outside of the command bar
+// Otherwise backspace jumps the browser to the previous page, and the game disappears
+$(function(){
+    $(document).bind("keydown keypress", function(e){
+        if( e.which == 8 ){ // 8 == backspace
+			if (!e.currentTarget.activeElement == 'input#txtCommand'){
+			  e.preventDefault();
+			}
+        }
+    });
+});
+
 function sendCommand(text, metadata) {
     markScrollPosition();
     var data = new Object();

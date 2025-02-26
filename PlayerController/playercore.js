@@ -345,15 +345,23 @@ function SetBackgroundOpacity(opacity) {
     _backgroundOpacity = opacity;
 }
 
-function setBackground(col) {
-    colNameToHex = colourNameToHex(col);
-    if (colNameToHex) col = colNameToHex;
-    rgbCol = hexToRgb(col);
-    var cssBackground = "rgba(" + rgbCol.r + "," + rgbCol.g + "," + rgbCol.b + "," + _backgroundOpacity + ")";
-    $("#gameBorder").css("background-color", cssBackground);
+String.prototype.startsWith = function(s){ return this.charAt(0) === s; }
 
-    $("#gamePanel").css("background-color", col);
-    $("#gridPanel").css("background-color", col);
+function setBackground(col) {
+  /* If '#rgb', convert to '#rrggbb'*/
+  if (col.startsWith("#") && col.length == 4) {
+    var colBak = "" + col + "";
+    newCol = col.replace(/#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])/, '#$1$1$2$2$3$3');
+    col = newCol || col;
+    console.log ("DEBUGGING:(playercore.js) setBackground() changed \"" + colBak + "\" to \"" + col + "\".")
+  }
+  colNameToHex = colourNameToHex(col);
+  if (colNameToHex) col = colNameToHex;
+  rgbCol = hexToRgb(col);
+  var cssBackground = "rgba(" + rgbCol.r + "," + rgbCol.g + "," + rgbCol.b + "," + _backgroundOpacity + ")";
+  $("#gameBorder").css("background-color", cssBackground);
+  $("#gamePanel").css("background-color", col);
+  $("#gridPanel").css("background-color", col);
 }
 
 function setPanelHeight() {
@@ -728,8 +736,10 @@ function disableAllCommandLinks() {
 }
 
 function clearScreen() {
-    $("#divOutput").css("min-height", 0);
+    $("#outputData").insertBefore($("#divOutput"));
+	$("#divOutput").css("min-height", 0);
     $("#divOutput").html("");
+	$("#divOutput").append($("#outputData"));
     createNewDiv("left");
     beginningOfCurrentTurnScrollPosition = 0;
     setTimeout(function () {
