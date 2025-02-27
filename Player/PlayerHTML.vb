@@ -1,6 +1,7 @@
 ﻿Imports System.Xml
 Imports System.IO
 Imports Microsoft.Win32
+Imports System
 
 Public Class PlayerHTML
 
@@ -102,7 +103,7 @@ Public Class PlayerHTML
                 RaiseEvent ExitFullScreen()
             Case "Save"
                 RaiseEvent Save(args)
-			' Added by KV
+            ' Added by KV
             Case "RestartGame"
                 RestartGame(args)
             Case "SaveTranscript"
@@ -116,10 +117,12 @@ Public Class PlayerHTML
     End Sub
 
     Private Sub WriteToLog(data As String)
-        'Dim logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest Logs"
+        Dim logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest Logs"
         Dim gameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
         gameName = gameName.Replace(".aslx", "")
-        Dim logPath = CurrentGame.Filename.Replace(Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1), "")
+        If Not System.IO.Directory.Exists(logPath) = True Then
+            System.IO.Directory.CreateDirectory(logPath)
+        End If
         If Not System.IO.File.Exists(logPath + "\" + gameName + "-log.txt") = True Then
             Dim file As System.IO.FileStream
             file = System.IO.File.Create(logPath + "\" + gameName + "-log.txt")
@@ -163,6 +166,7 @@ Public Class PlayerHTML
         End If
         My.Computer.FileSystem.WriteAllText(transcriptPath + "\" + mgameName + "-transcript.txt", Replace(data, "@@@NEW_LINE@@@", Environment.NewLine), True)
     End Sub
+
     Private Sub RestartGame(data As String)
         m_keyHandler_KeyPressed(131154)
     End Sub

@@ -1,4 +1,4 @@
-﻿<asl version="550" template="Greek">
+﻿<asl version="580" template="Greek">
 
   <include ref="Greek.aslx"/>
   <include ref="Core.aslx"/>
@@ -11,7 +11,6 @@
 
   <object name="room">
     <inherit name="editor_room" />
-    <isroom />
 
     <object name="player">
       <inherit name="editor_object" />

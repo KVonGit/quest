@@ -234,7 +234,7 @@ function saveGame() {
     }, 100);
 }
 
-function saveGameResponse(data) {
+/*function saveGameResponse(data) {
     addText("Saving game...<br/>");
     $.ajax({
         url: apiRoot + "games/save/?id=" + $_GET["id"],
@@ -258,4 +258,86 @@ function saveGameResponse(data) {
             data: data
         }
     });
+}*/
+
+function saveGameResponse(data){
+	function base64ToBytes(base64) {
+	  const binString = atob(base64);
+	  return Uint8Array.from(binString, (m) => m.codePointAt(0));
+	}
+    addTextAndScroll("<p>Saving game to the browser's localStorage...</p>");
+	if(window.confirm("Would you also like to download your save file?")){
+      let link = document.createElement('a');
+      link.download = $_GET["id"] + '.quest-webplayer-save';
+      var blob;
+      if(!window.confirm("Would you like the data decoded?\n(This will not be a usable game-save file if decoded.)")){
+        /* This will save the data in base64 format, with no modifications, besides adding the game id */
+        let saveData = data;
+        blob = new Blob([$_GET["id"] + "@@@GAME_ID@@@" + saveData], {type: 'text/plain'});
+      }
+      else {
+        /* This will save the data in XML format. I save the ID within a <!-- --> commment. */
+        let saveData = new TextDecoder().decode(base64ToBytes(data));
+        blob = new Blob(["<?xml version=\"1.0\" ?><!--SAVE_GAME_ID-" + $_GET["id"] + "--><!--SAVE_DATA_BEGINS-->" + saveData], {type: 'text/plain'});
+      }
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+	
+	localStorage.setItem($_GET["id"] + "-quest-webplayer-save", data);
+	if(localStorage.getItem($_GET["id"] + "-quest-webplayer-save") == data){
+	  addTextAndScroll("<p>Game saved successfully to your browser's local storage.</p>");
+	}
+	else {
+	  addTextAndScroll("<p>Game FAILED to save to your browser's local storage.</p>");
+	}
 }
+
+function WriteToLog(data){
+  console.log("" + data);
+}
+
+// TRANCSCRIPT FUNCTIONS
+// Added by KV  
+
+function WriteToTranscript(data){
+  if (noTranscript){
+    // Do nothing.
+    return;
+  }
+  if (!isLocalStorageAvailable()){
+    console.error("There is no localStorage. Disabling transcript functionality.");
+    noTranscript = true;
+    savingTranscript = false;
+    return;
+  }
+  var tName = transcriptName || "Transcript";
+  if (data.indexOf("___SCRIPTDATA___") > -1) {
+    tName = data.split("___SCRIPTDATA___")[0].trim() || tName;
+    data = data.split("___SCRIPTDATA___")[1];
+  }
+  var oldData = localStorage.getItem("questtranscript-" + tName) || "";
+  localStorage.setItem("questtranscript-" + tName, oldData + data);
+}
+
+// Make sure localStorage is available, hopefully without throwing any errors!
+
+/* https://stackoverflow.com/a/16427747 */
+function isLocalStorageAvailable(){
+    var test = 'test';
+    try {
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+// NOTE:
+// There is a site included to handle viewing of transcipts for all online users:
+// TranscriptViewer/index.html
+
+
+// END OF TRANSCRIPT FUNCTIONS

@@ -2,22 +2,22 @@
 ; github.com/stfx/innodependencyinstaller
 ; codeproject.com/Articles/20868/NET-Framework-1-1-2-0-3-5-Installer-for-InnoSetup
 
-#define QuestVersion '5.8.0'
-#define SetupVersion '580'
+#define QuestVersion '5.8.1'
+#define SetupVersion '581'
 
 [Setup]
 AppName=Quest
 AppVersion={#QuestVersion}
 AppVerName=Quest {#QuestVersion}
-AppCopyright=Copyright © 2017/2018 Andy Joel, 1998-2016 Alex Warren
+AppCopyright=Copyright © 2025 Alex Warren, Andy Joel, and Contributors
 VersionInfoVersion={#QuestVersion}
 AppPublisher=Andy Joel
 AppPublisherURL=https://textadventures.co.uk/
 AppSupportURL=https://textadventures.co.uk/help
 AppUpdatesURL=https://textadventures.co.uk/quest/desktop
 OutputBaseFilename=quest{#SetupVersion}
-DefaultGroupName=Quest
-DefaultDirName={pf}\Quest 5
+DefaultGroupName=Quest581
+DefaultDirName={pf}\Quest 581
 UninstallDisplayIcon={app}\Quest.exe
 OutputDir=bin
 SourceDir=.
@@ -39,12 +39,12 @@ Source: "..\Dependencies\vcredist_x86.exe"; DestDir: "{tmp}"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Icons]
-Name: "{group}\Quest"; Filename: "{app}\Quest.exe"
-Name: "{commondesktop}\Quest"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
+Name: "{group}\Quest581"; Filename: "{app}\Quest.exe"
+Name: "{commondesktop}\Quest581"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
 
 [Run]
 Filename: "{tmp}\vcredist_x86.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."
-Filename: "{app}\Quest.exe"; Description: "Launch Quest"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Quest.exe"; Description: "Launch Quest581"; Flags: nowait postinstall skipifsilent
 
 [Registry]
 ; File association: ASLX

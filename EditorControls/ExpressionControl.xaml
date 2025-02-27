@@ -25,7 +25,7 @@
         </Grid.RowDefinitions>
         <ComboBox Name="lstType" SelectionChanged="lstType_SelectionChanged" Margin="0,0,10,0" VerticalAlignment="Top" />
         <ComboBox Name="lstTemplate" SelectionChanged="lstTemplate_SelectionChanged" Margin="0,0,10,0" Visibility="Collapsed" VerticalAlignment="Top" />
-        <TextBox Name="txtExpression" Grid.Column="1" TextChanged="txtExpression_TextChanged" LostFocus="txtExpression_LostFocus" HorizontalScrollBarVisibility="Auto" MinWidth="40" MinHeight="20" VerticalContentAlignment="Center" Background="White" SelectionBrush="#FF1D1B61">
+        <TextBox Name="txtExpression" Grid.Column="1" TextChanged="txtExpression_TextChanged" LostFocus="txtExpression_LostFocus" HorizontalScrollBarVisibility="Auto" MinWidth="40" MinHeight="20" VerticalContentAlignment="Center" Background="White" SelectionBrush="#FF1D1B61" TextWrapping="Wrap">
             <TextBox.BorderBrush>
                 <SolidColorBrush Color="#FFB4B4B4"/>
             </TextBox.BorderBrush>

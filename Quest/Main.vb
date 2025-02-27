@@ -386,19 +386,19 @@ Public Class Main
     End Sub
 
     Private Sub LogBug()
-        LaunchURL("https://github.com/textadventures/quest/issues")
+        LaunchURL("https://github.com/KVonGit/quest5-stuff/issues")
     End Sub
 
     Private Sub Forums()
-        LaunchURL("http://forum.textadventures.co.uk/")
+        LaunchURL("https://github.com/KVonGit/quest5-stuff/discussions")
     End Sub
 
     Private Sub Help()
-        LaunchURL("http://docs.textadventures.co.uk/quest/")
+        LaunchURL("https://github.com/KVonGit/quest5-stuff/wiki")
     End Sub
 
     Private Sub Tutorial()
-        LaunchURL("http://docs.textadventures.co.uk/quest/tutorial/")
+        LaunchURL("https://github.com/KVonGit/quest5-stuff/wiki")
     End Sub
 
     Private Sub LaunchURL(url As String)

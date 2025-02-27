@@ -19,7 +19,7 @@ Public Class EditorWelcome
     End Sub
 
     Private Sub Hyperlink_Click(sender As System.Object, e As System.Windows.RoutedEventArgs)
-        LaunchURL("http://forum.textadventures.co.uk/")
+        LaunchURL("https://github.com/KVonGit/quest5-stuff/Discussions")
     End Sub
 
     Private Sub LaunchURL(url As String)

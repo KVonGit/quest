@@ -10879,7 +10879,9 @@ var BlendMode = new function() {
 		this[mode] = true;
 	}, {});
 
-	var ctx = CanvasProvider.getContext(1, 1);
+	//var ctx = CanvasProvider.getContext(1, 1);
+	// https://github.com/textadventures/quest/issues/1269
+	var ctx = CanvasProvider.getContext("2d", {willReadFrequently:true});
 	Base.each(modes, function(func, mode) {
 		ctx.save();
 		var darken = mode === 'darken',

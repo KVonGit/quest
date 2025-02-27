@@ -6494,23 +6494,23 @@ Public Class LegacyGame
         _playerErrorMessageString(PlayerError.DefaultWait) = "Press a key to continue..."
         _playerErrorMessageString(PlayerError.AlreadyTaken) = "You already have that."
     End Sub
-    
-    Private Sub RequestJS (js As String)
+
+    Private Sub RequestJS(js As String)
         _player.RunScript(js.Split("`"c)(0), {js.Split("`"c)(1)})
     End Sub
-    
-    Private Sub JsEval (args As String)
+
+    Private Sub JsEval(args As String)
         _player.RunScript("eval", {args})
     End Sub
-    
-    Private Sub JsSet (varval As String)
+
+    Private Sub JsSet(varval As String)
         _player.RunScript("eval", {"" + varval.Split("`"c)(0) + " = " + varval.Split("`"c)(1) + ""})
     End Sub
-    
-    Private Sub JsCall (funcargs As String)
+
+    Private Sub JsCall(funcargs As String)
         _player.RunScript("eval", {"" + funcargs.Split(";"c)(0) + "(" + funcargs.Split(";"c)(1) + ")"})
     End Sub
-    
+
     Private Sub SetFont(name As String)
         If name = "" Then name = _defaultFontName
         _player.SetFont(name)
@@ -7329,11 +7329,11 @@ Public Class LegacyGame
             _player.SetPanelContents("<img src=""" + _player.GetURL(filename) + """ onload=""setPanelHeight()""/>")
         End If
     End Sub
-    
+
     Private Sub ShowStaticPicture(filename As String)
-            ' For 211 & 420 games which expect pictures to be in a popup window -
-            ' use the static picture frame feature so that image is not cleared
-            _player.SetPanelContents("<img src=""" + _player.GetURL(filename) + """ onload=""setPanelHeight()""/>")
+        ' For 211 & 420 games which expect pictures to be in a popup window -
+        ' use the static picture frame feature so that image is not cleared
+        _player.SetPanelContents("<img src=""" + _player.GetURL(filename) + """ onload=""setPanelHeight()""/>")
     End Sub
 
     Private Sub ShowRoomInfoV2(room As String)
@@ -7692,10 +7692,10 @@ Public Class LegacyGame
         If type = Thing.Room Then
             objList.Add(New ListData(name, _listVerbs(ListType.ExitsList)))
             exitList.Add(New ListData(name, _listVerbs(ListType.ExitsList)))
-        Else If type = Thing.Character Then
+        ElseIf type = Thing.Character Then
             objList.Add(New ListData(name, New List(Of String)(New String() {"Examine", "Speak To"})))
         Else
-            objList.Add(New ListData(name,  New List(Of String)(New String() {"Examine", "Take"})))
+            objList.Add(New ListData(name, New List(Of String)(New String() {"Examine", "Take"})))
         End If
     End Sub
 
@@ -7865,9 +7865,9 @@ Public Class LegacyGame
         ' beginning or end of a line.
         ' PostScript: well, it used to, I'm not sure if it's really
         ' required now though....
-        ' As of Quest 4.0 we use the ¦ character rather than a dot.
-        test = "¦" & Trim(test) & "¦"
-        required = "¦" & required & "¦"
+        ' As of Quest 4.0 we use the ï¿½ character rather than a dot.
+        test = "ï¿½" & Trim(test) & "ï¿½"
+        required = "ï¿½" & required & "ï¿½"
 
         'Go through RequiredLine in chunks going up to variables.
         Dim currentReqLinePos = 1
@@ -8612,7 +8612,7 @@ Public Class LegacyGame
                                     AddObjectAction(_numberObjs, "examine", restOfLine)
                                 End If
                             End If
-                        ElseIf (_gameAslVersion = 211 Or _gameAslVersion >= 311)  And BeginsWith(_lines(j), "speak ") Then
+                        ElseIf (_gameAslVersion = 211 Or _gameAslVersion >= 311) And BeginsWith(_lines(j), "speak ") Then
                             restOfLine = GetEverythingAfter(_lines(j), "speak ")
                             If Left(restOfLine, 1) = "<" Then
                                 AddToObjectProperties("speak=" & GetParameter(_lines(j), _nullContext), _numberObjs, _nullContext)
@@ -9441,16 +9441,16 @@ Public Class LegacyGame
             ' was set to NullThread here for some reason
             If _afterTurnScript <> "" And globalOverride = False Then ExecuteScript(_afterTurnScript, ctx)
         End If
-        
+
         If _gameAslVersion < 280 Then
-        'update items list quest.items
-        invList = ""
-        For j = 1 To _numberItems
-            If _items(j).Got = True Then
-                invList = invList & _items(j).Name & ", "
-            End If
-        Next j
-        SetStringContents("quest.items", invList, ctx)
+            'update items list quest.items
+            invList = ""
+            For j = 1 To _numberItems
+                If _items(j).Got = True Then
+                    invList = invList & _items(j).Name & ", "
+                End If
+            Next j
+            SetStringContents("quest.items", invList, ctx)
         End If
 
         Print("", ctx)
@@ -10478,7 +10478,7 @@ Public Class LegacyGame
                 _player.SetPanesVisible("off")
             ElseIf Trim(LCase(scriptLine)) = "panes on" Then
                 If Not _panesDisabled Then
-                  _player.SetPanesVisible("on")
+                    _player.SetPanesVisible("on")
                 End If
             ElseIf Trim(LCase(scriptLine)) = "panes disabled" Then
                 _player.SetPanesVisible("off")
@@ -10797,7 +10797,7 @@ Public Class LegacyGame
         If _gameAslVersion = 420 Then
             _listVerbs.Add(ListType.ObjectsList, New List(Of String)(New String() {"Examine"}))
             _listVerbs.Add(ListType.InventoryList, New List(Of String)(New String() {"Examine", "Drop"}))
-        Else If _gameAslVersion >= 280 And _gameAslVersion < 390 Then
+        ElseIf _gameAslVersion >= 280 And _gameAslVersion < 390 Then
             _listVerbs.Add(ListType.ObjectsList, New List(Of String)(New String() {"Look at", "Examine", "Take", "Speak to"}))
             _listVerbs.Add(ListType.InventoryList, New List(Of String)(New String() {"Look at", "Examine", "Use", "Drop"}))
         Else
@@ -10837,7 +10837,7 @@ Public Class LegacyGame
             ' Set up an array containing the names of all the items
             ' used in the game, based on the possitems statement
             ' of the 'define game' block.
-            
+
             SetUpItemArrays()
         End If
 
@@ -11010,7 +11010,7 @@ Public Class LegacyGame
     End Sub
 
     Friend Sub Print(txt As String, ctx As Context)
-        If Not _outPutOn Then 
+        If Not _outPutOn Then
             LogASLError(Date.Now.ToString() & " - PRINT: Text not printed because outputoff is true:" & vbCrLf & "'" & txt & "'")
             Exit Sub
         End If
@@ -11265,20 +11265,20 @@ Public Class LegacyGame
 
     Private Sub ShowHelp(ctx As Context)
         If _gameAslVersion >= 280 Then
-          ' In Quest 4 and below, the help text displays in a separate window. In Quest 5, it displays
-          ' in the same window as the game text.
-          Print("|b|cl|s14Quest Quick Help|xb|cb|s00", ctx)
-          Print("", ctx)
-          Print("|cl|bMoving|xb|cb Press the direction buttons in the 'Compass' pane, or type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xn", ctx)
-          Print("To go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n", ctx)
-          Print("|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n", ctx)
-          Print("|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n", ctx)
-          Print("|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game. The next turn after referring to an object or character, you can use |bIT|xb, |bHIM|xb etc. as appropriate to refer to it/him/etc. again. If you make a mistake when typing an object's name, type |bOOPS|xb followed by your correction.|n", ctx)
-          Print("|cl|bKeyboard shortcuts|xb|cb Press the |crup arrow|cb and |crdown arrow|cb to scroll through commands you have already typed in. Press |crEsc|cb to clear the command box.|n|n", ctx)
-          Print("Further information is available by selecting |iQuest Documentation|xi from the |iHelp|xi menu.", ctx)
-      Else
-          _player.WriteHTML("<center>–=–<h1 style=""color:blue;"">USING QUEST:</h1><div style=""font-family:" & _defaultFontName & "; font-size: " & _defaultFontSize & "pt;""><p>• To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc., or just type <b>N, S, E</b> or <b>W</b>.</p><p>• To go into a place, type <b>GO TO ...</b> . To leave a place, type <b>OUT, EXIT</b> or <b>LEAVE</b>, or press the '<font color=red>OUT</font>' button.</p><p>• You can interact with people and objects using <b>TAKE ...; GIVE ... TO ...; TALK/SPEAK TO ...; USE ... ON/WITH ...; LOOK [AT ...];</b> plus several others - just use your common sense!</p><p>• You can type <b>QUIT</b> to leave Quest.</p><p>• Type <b>ABOUT</b> to get information on the current game.</p>-=-<br/></div></center>")
-      End If
+            ' In Quest 4 and below, the help text displays in a separate window. In Quest 5, it displays
+            ' in the same window as the game text.
+            Print("|b|cl|s14Quest Quick Help|xb|cb|s00", ctx)
+            Print("", ctx)
+            Print("|cl|bMoving|xb|cb Press the direction buttons in the 'Compass' pane, or type |bGO NORTH|xb, |bSOUTH|xb, |bE|xb, etc. |xn", ctx)
+            Print("To go into a place, type |bGO TO ...|xb . To leave a place, type |bOUT, EXIT|xb or |bLEAVE|xb, or press the '|crOUT|cb' button.|n", ctx)
+            Print("|cl|bObjects and Characters|xb|cb Use |bTAKE ...|xb, |bGIVE ... TO ...|xb, |bTALK|xb/|bSPEAK TO ...|xb, |bUSE ... ON|xb/|bWITH ...|xb, |bLOOK AT ...|xb, etc.|n", ctx)
+            Print("|cl|bExit Quest|xb|cb Type |bQUIT|xb to leave Quest.|n", ctx)
+            Print("|cl|bMisc|xb|cb Type |bABOUT|xb to get information on the current game. The next turn after referring to an object or character, you can use |bIT|xb, |bHIM|xb etc. as appropriate to refer to it/him/etc. again. If you make a mistake when typing an object's name, type |bOOPS|xb followed by your correction.|n", ctx)
+            Print("|cl|bKeyboard shortcuts|xb|cb Press the |crup arrow|cb and |crdown arrow|cb to scroll through commands you have already typed in. Press |crEsc|cb to clear the command box.|n|n", ctx)
+            Print("Further information is available by selecting |iQuest Documentation|xi from the |iHelp|xi menu.", ctx)
+        Else
+            _player.WriteHTML("<center>ï¿½=ï¿½<h1 style=""color:blue;"">USING QUEST:</h1><div style=""font-family:" & _defaultFontName & "; font-size: " & _defaultFontSize & "pt;""><p>ï¿½ To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc., or just type <b>N, S, E</b> or <b>W</b>.</p><p>ï¿½ To go into a place, type <b>GO TO ...</b> . To leave a place, type <b>OUT, EXIT</b> or <b>LEAVE</b>, or press the '<font color=red>OUT</font>' button.</p><p>ï¿½ You can interact with people and objects using <b>TAKE ...; GIVE ... TO ...; TALK/SPEAK TO ...; USE ... ON/WITH ...; LOOK [AT ...];</b> plus several others - just use your common sense!</p><p>ï¿½ You can type <b>QUIT</b> to leave Quest.</p><p>ï¿½ Type <b>ABOUT</b> to get information on the current game.</p>-=-<br/></div></center>")
+        End If
     End Sub
 
     Private Sub ReadCatalog(data As String)
@@ -12072,7 +12072,7 @@ Public Class LegacyGame
             End If
 
         End If
-        
+
         If _gameAslVersion < 280 Then
             ' set inventory pane label to "items"!
             JsCall("setInterfaceString;'InventoryLabel','Items'")
@@ -12191,13 +12191,13 @@ Public Class LegacyGame
         End If
         ExecuteDo(eventName, ctx)
     End Sub
-    
+
     Private Sub RunASLEvent(data As String)
         LogASLError("Running RunASLEvent: " + data + "")
         Dim args As String() = data.Split({";"c}, 2)
         SendEvent(args(0), args(1))
     End Sub
-    
+
     Private Sub UIEvent(cmd As String, args As String)
         LogASLError("Running UIEvent: " + cmd + " ; " + args + "")
         Select Case cmd
@@ -12206,23 +12206,26 @@ Public Class LegacyGame
             Case "RestartGame"
                 DoClear()
                 DoBegin()
-            'Case "SaveTranscript"
+                'Case "SaveTranscript"
                 ' Deprecated in 5.9
                 'WriteToTranscript(args)
-            'Case "WriteToTranscript"
+                'Case "WriteToTranscript"
                 'WriteToTranscript(args)
         End Select
     End Sub
-    
+
     Private Function ShellExecute(ByVal File As String) As Boolean
-        Dim myProcess As New Process
-        myProcess.StartInfo.FileName = _gamePath & File
-        LogASLError("ShellExecute: " &  myProcess.StartInfo.FileName & "")
-        Print("Opening " &  myProcess.StartInfo.FileName & "", _nullContext)
-        myProcess.StartInfo.UseShellExecute = True
-        myProcess.StartInfo.RedirectStandardOutput = False
-        myProcess.Start()
-        myProcess.Dispose()
+        'Dim myProcess As New Process
+        'myProcess.StartInfo.FileName = _gamePath & File
+        'LogASLError("ShellExecute: " & myProcess.StartInfo.FileName & "")
+        'Print("Opening " & myProcess.StartInfo.FileName & "", _nullContext)
+        'myProcess.StartInfo.UseShellExecute = True
+        'myProcess.StartInfo.RedirectStandardOutput = False
+        'myProcess.Start()
+        'myProcess.Dispose()
+
+        LogASLError("'shell' is not supported in this version of Quest", LogType.WarningError)
+		Print("Error running script: 'shell' is not supported in this version of Quest", _nullContext)
     End Function
 
 
@@ -12466,7 +12469,7 @@ Public Class LegacyGame
         RaiseEvent LogError(ex.Message + Environment.NewLine + ex.StackTrace)
     End Sub
 
-    
+
     Public Function GetExternalScripts() As IEnumerable(Of String) Implements IASL.GetExternalScripts
         Return Nothing
     End Function

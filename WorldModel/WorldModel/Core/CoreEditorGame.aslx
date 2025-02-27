@@ -173,9 +173,14 @@
         <controltype>checkbox</controltype>
         <caption>[EditorGameMultipleCommands]</caption>
         <attribute>multiplecommands</attribute>
-      </control>	  
-
-
+      </control>
+    
+      <control>
+        <controltype>checkbox</controltype>
+        <caption>[EditorGameWriteLogToFile]</caption>
+        <attribute>writelogtofile</attribute>
+        <desktop/>
+      </control>
     </tab>
 
     
@@ -231,7 +236,7 @@
       <control>
         <controltype>label</controltype>
         <caption>[EditorGameBrowseavailable]</caption>
-        <href>http://www.google.com/webfonts</href>
+        <href>https://fonts.google.com/</href>
       </control>
 
       <control>
@@ -349,6 +354,23 @@
         <caption>[EditorGameAfterusing]</caption>
         <attribute>deactivatecommandlinks</attribute>
         <onlydisplayif>game.enablehyperlinks</onlydisplayif>
+      </control>
+      
+      <control>
+        <controltype>title</controltype>
+        <caption>[EditorGameShowMenuOptionsCaption]</caption>
+      </control>
+      
+      <control>
+        <controltype>checkbox</controltype>
+        <caption>[EditorGameDoNotClearMenus]</caption>
+        <attribute>donotclearmenus</attribute>
+      </control>
+      
+      <control>
+        <controltype>checkbox</controltype>
+        <caption>[EditorGameShowMenuResponses]</caption>
+        <attribute>showmenuresponses</attribute>
       </control>
 
       <control>
@@ -582,6 +604,17 @@
         <controltype>checkbox</controltype>
         <caption>[EditorGameShowlocation]</caption>
         <attribute>showlocation</attribute>
+      </control>
+
+
+      <control>
+        <controltype>file</controltype>
+        <caption>[EditorGameLocationBarBg]</caption>
+        <attribute>locationbarimage</attribute>
+        <source>[EditorImageFormats]</source>
+        <filefiltername>Picture Files</filefiltername>
+        <preview/>
+        <onlydisplayif>game.showlocation and not game.classiclocation</onlydisplayif>
       </control>
 
       <control>

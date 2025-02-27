@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("EditorControls")]
-[assembly: AssemblyCopyright("Copyright © 2016 Alex Warren")]
+[assembly: AssemblyCopyright("Copyright © Alex Warren, Andy Joel, and contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,4 +51,4 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.6.*")]
+[assembly: AssemblyVersion("5.8.1.*")]
