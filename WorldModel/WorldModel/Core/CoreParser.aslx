@@ -13,8 +13,8 @@
   For multiple commands, HandleNextCommandQueueItem is called recursively to iterate through them.
   Either way HandleSingleCommand is called for each command.
   -->
-  <function name="HandleCommand" parameters="command, metadata">
-    <![CDATA[
+	<function name="HandleCommand" parameters="command, metadata">
+		<![CDATA[
     handled = false
     if (game.menucallback <> null) {
       if (HandleMenuTextResponse(command)) {
@@ -32,15 +32,14 @@
     if (not handled) {
       StartTurnOutputSection
       if (StartsWith (command, "*")) {
-        // Modified by KV to bypass turn scripts and turn counts, and to print "Noted."
-        game.suppressturnscripts = true
+        SuppressTurnscripts
         msg ("")
         msg (SafeXML (command))
-        msg("Noted.")
-	// Added for Quest 5.8    - KV
-	FinishTurn
+        msg ("Noted.")
+        // Added for Quest 5.8
+        FinishTurn
       }
-      else {    
+      else {
         shownlink = false
         if (game.echocommand) {
           if (metadata <> null and game.enablehyperlinks and game.echohyperlinks) {
@@ -50,7 +49,7 @@
                 object = GetObject(objectname)
                 if (object <> null) {
                   msg ("")
-                  msg ("&gt; " + Left(command, LengthOf(command) - LengthOf(key)) + "{object:" + object.name + "}" )
+                  msg ("&gt; " + Left(command, LengthOf(command) - LengthOf(key)) + "{object:" + object.name + "}")
                   shownlink = true
                 }
               }
@@ -61,34 +60,32 @@
             OutputTextRaw ("&gt; " + SafeXML(command))
           }
         }
-        else {
-          if (not GetBoolean(game, "notranscript") and GetBoolean(game, "savingtranscript")){
-            JS.writeToTranscript("<span><br/>> " + SafeXML(command) + "<br/></span>")
-          }
-        }
         if (game.command_newline) {
           msg ("")
         }
         game.pov.commandmetadata = metadata
-        if (game.multiplecommands){		
+        if (game.multiplecommands) {
+          foreach (alias, metadata) {
+            command = Replace (command, alias, Replace (alias, ".", "@@@DOT@@@"))
+          }
           commands = Split(command, ".")
           if (ListCount(commands) = 1) {
             game.pov.commandqueue = null
-            HandleSingleCommand (Trim(command))
+            HandleSingleCommand (Trim(Replace(command, "@@@DOT@@@", ".")))
           }
           else {
             game.pov.commandqueue = commands
             HandleNextCommandQueueItem
           }
-		    }
+        }
         else {
           game.pov.commandqueue = null
-          HandleSingleCommand (Trim(command))	
-        }		
+          HandleSingleCommand (Trim(command))
+        }
       }
     }
-    ]]>
-  </function>
+  ]]>
+	</function>
 
   
   <!--

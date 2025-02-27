@@ -128,16 +128,16 @@ namespace TextAdventures.Quest.EditorControls
             {
                 m_completionWindow = new CompletionWindow(textEditor.TextArea);
                 dynamic data = m_completionWindow.CompletionList.CompletionData;
-                data.Add(new CompletionData("object"));
-                data.Add(new CompletionData("command"));
-                data.Add(new CompletionData("verb"));
-                data.Add(new CompletionData("exit"));
-                data.Add(new CompletionData("function"));
-                data.Add(new CompletionData("type"));
-                data.Add(new CompletionData("walkthrough"));
-                data.Add(new CompletionData("javascript"));
-                data.Add(new CompletionData("inherit"));
-                m_completionWindow.Show();
+                //data.Add(new CompletionData("object"));
+                //data.Add(new CompletionData("command"));
+                //data.Add(new CompletionData("verb"));
+               // data.Add(new CompletionData("exit"));
+                //data.Add(new CompletionData("function"));
+                //data.Add(new CompletionData("type"));
+                //data.Add(new CompletionData("walkthrough"));
+                //data.Add(new CompletionData("javascript"));
+                //data.Add(new CompletionData("inherit"));
+                //m_completionWindow.Show();
                 m_completionWindow.Closed += m_completionWindow_Closed;
             }
         }

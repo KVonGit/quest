@@ -61,13 +61,13 @@
     <showhealth type="boolean">false</showhealth>
     <showmoney type="boolean">false</showmoney>
     <showtitle/>
-    <autodisplayverbs/>
+	<autodisplayverbs type="boolean">false</autodisplayverbs>
     <clearscreenonroomenter type="boolean">false</clearscreenonroomenter>
     <autodescription_youarein type="int">1</autodescription_youarein>
-    <autodescription_youcansee type="int">2</autodescription_youcansee>
-    <autodescription_youcango type="int">3</autodescription_youcango>
-    <autodescription_description type="int">4</autodescription_description>
-    <autodescription_youarein_useprefix/>
+    <autodescription_youcansee type="int">3</autodescription_youcansee>
+    <autodescription_youcango type="int">4</autodescription_youcango>
+    <autodescription_description type="int">2</autodescription_description>
+	  <autodescription_youarein_useprefix type="boolean"> false</autodescription_youarein_useprefix>
     <autodescription_youarein_newline type="boolean">false</autodescription_youarein_newline>
     <autodescription_youcansee_newline type="boolean">false</autodescription_youcansee_newline>
     <autodescription_youcango_newline type="boolean">false</autodescription_youcango_newline>
@@ -92,9 +92,9 @@
     <deactivatecommandlinks type="boolean">false</deactivatecommandlinks>
     <donotclearmenus type="boolean">true</donotclearmenus>
     <showmenuresponses type="boolean">true</showmenuresponses>
-    <multiplecommands type="boolean">false</multiplecommands>
-    <publishfileextensions>*.jpg;*.jpeg;*.png;*.gif;*.js;*.wav;*.mp3;*.htm;*.html;*.svg;*.ogg;*.ogv</publishfileextensions>
-    <writelogtofile type="boolean">false</writelogtofile>
+    <multiplecommands type="boolean">true</multiplecommands>
+    <publishfileextensions>*.jpg;*.jpeg;*.png;*.gif;*.js;*.wav;*.mp3;*.htm;*.html;*.svg;*.ogg;*.ogv;*.mp4;*.txt;*.zip;*.pdf;*.md;*.asl;*.cas;*.mid</publishfileextensions>
+    <writelogtofile type="boolean">true</writelogtofile>
     <notranscript type="boolean">false</notranscript>
     <savetranscript type="boolean">false</savetranscript>
     <changedsavetranscript type="script">

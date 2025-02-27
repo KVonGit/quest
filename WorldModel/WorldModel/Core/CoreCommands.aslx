@@ -943,8 +943,7 @@
         s = s + "<b>AUTHOR: </b>" + game.author + "<br/>"
       }
       s = s + "<b>VERSION: </b>" + game.version + "<br/>"
-      s = s + "<b>IFID: </b>" + game.gameid + "<br/>"
-      s = s + "<br/>"
+      s = s + "<b>IFID: </b>" + game.gameid
       msg (s)
       game.suppressturnscripts = true
     ]]></script>
