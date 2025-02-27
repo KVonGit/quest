@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("EditorControls")]
-[assembly: AssemblyCopyright("Copyright © Alex Warren, Andy Joel, and contributors")]
+[assembly: AssemblyCopyright("Copyright © 2025 Alex Warren, Andy Joel, and contributors")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
