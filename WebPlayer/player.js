@@ -167,8 +167,8 @@ function sendCommand(text, metadata) {
 }
 
 function ASLEvent(event, parameter) {
-    if (!canSendCommand) return false;
-    canSendCommand = false;
+    //if (!canSendCommand) return false;
+    //canSendCommand = false;
     // using setTimeout here to work around a double-submission race condition which seems to only affect Firefox,
     // even though we use "return false" to suppress submission of the form with the Enter key.
     window.setTimeout(function () {

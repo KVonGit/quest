@@ -1385,7 +1385,10 @@ Public Class LegacyGame
     Private Function GetResourceLines(res As Byte()) As String()
         Dim enc As New System.Text.UTF8Encoding()
         Dim resFile As String = enc.GetString(res)
-        Return Split(resFile, Chr(13) + Chr(10))
+        resFile = resFile.Replace(Chr(13) + Chr(10), Environment.NewLine)
+        resFile = resFile.Replace(Chr(10), Environment.NewLine)
+        'Return Split(resFile, Chr(13) + Chr(10))
+        Return Split(resFile, Environment.NewLine)
     End Function
 
     '<NOCONVERT
@@ -7865,9 +7868,9 @@ Public Class LegacyGame
         ' beginning or end of a line.
         ' PostScript: well, it used to, I'm not sure if it's really
         ' required now though....
-        ' As of Quest 4.0 we use the � character rather than a dot.
-        test = "�" & Trim(test) & "�"
-        required = "�" & required & "�"
+        ' As of Quest 4.0 we use the ¦ character rather than a dot.
+        test = "¦" & Trim(test) & "¦"
+        required = "¦" & required & "¦"
 
         'Go through RequiredLine in chunks going up to variables.
         Dim currentReqLinePos = 1
@@ -11277,7 +11280,7 @@ Public Class LegacyGame
             Print("|cl|bKeyboard shortcuts|xb|cb Press the |crup arrow|cb and |crdown arrow|cb to scroll through commands you have already typed in. Press |crEsc|cb to clear the command box.|n|n", ctx)
             Print("Further information is available by selecting |iQuest Documentation|xi from the |iHelp|xi menu.", ctx)
         Else
-            _player.WriteHTML("<center>�=�<h1 style=""color:blue;"">USING QUEST:</h1><div style=""font-family:" & _defaultFontName & "; font-size: " & _defaultFontSize & "pt;""><p>� To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc., or just type <b>N, S, E</b> or <b>W</b>.</p><p>� To go into a place, type <b>GO TO ...</b> . To leave a place, type <b>OUT, EXIT</b> or <b>LEAVE</b>, or press the '<font color=red>OUT</font>' button.</p><p>� You can interact with people and objects using <b>TAKE ...; GIVE ... TO ...; TALK/SPEAK TO ...; USE ... ON/WITH ...; LOOK [AT ...];</b> plus several others - just use your common sense!</p><p>� You can type <b>QUIT</b> to leave Quest.</p><p>� Type <b>ABOUT</b> to get information on the current game.</p>-=-<br/></div></center>")
+          _player.WriteHTML("<center>–=–<h1 style=""color:blue;"">USING QUEST:</h1><div style=""font-family:" & _defaultFontName & "; font-size: " & _defaultFontSize & "pt;""><p>• To move, you can press the arrow buttons on this window, you can type <b>[GO] NORTH/SOUTH/</b> etc., or just type <b>N, S, E</b> or <b>W</b>.</p><p>• To go into a place, type <b>GO TO ...</b> . To leave a place, type <b>OUT, EXIT</b> or <b>LEAVE</b>, or press the '<font color=red>OUT</font>' button.</p><p>• You can interact with people and objects using <b>TAKE ...; GIVE ... TO ...; TALK/SPEAK TO ...; USE ... ON/WITH ...; LOOK [AT ...];</b> plus several others - just use your common sense!</p><p>• You can type <b>QUIT</b> to leave Quest.</p><p>• Type <b>ABOUT</b> to get information on the current game.</p>-=-<br/></div></center>")
         End If
     End Sub
 
@@ -12273,7 +12276,7 @@ Public Class LegacyGame
             Dim extractResult As String = ExtractFile(filename)
             Return extractResult
         End If
-        Return System.IO.Path.Combine(_gamePath, filename)
+        Return System.IO.Path.Combine(_gamePath, filename.ToLower())
     End Function
 
     Private Sub Cleanup()

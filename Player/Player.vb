@@ -2,6 +2,7 @@
 Imports System.Threading
 Imports System.Globalization
 Imports TextAdventures.Utility.Language.L
+Imports System.Linq
 
 Public Class Player
 
@@ -869,7 +870,13 @@ Public Class Player
     End Sub
 
     Public Function GetURL(file As String) As String Implements IPlayer.GetURL
-        Return ctlPlayerHtml.GetURL(file)
+        ' Return ctlPlayerHtml.GetURL(file)
+        'We might be running on a case-sensitive file system, so look up the correct casing
+        Dim resource = m_htmlHelper.Game.GetResourcePath(file) _
+            .FirstOrDefault(Function(n) String.Equals(n, file, StringComparison.InvariantCultureIgnoreCase))
+
+        Return ctlPlayerHtml.GetURL(resource)
+
     End Function
 
     Private Sub m_gameTimer_RequestNextTimerTick(nextTick As Integer) Handles m_gameTimer.RequestNextTimerTick

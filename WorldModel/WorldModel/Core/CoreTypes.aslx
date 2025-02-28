@@ -205,6 +205,7 @@
       </item>
     </textprocessorcommands>
     <feature_devmode type="boolean">false</feature_devmode>
+    <useoxfordcomma/>
   </type>
 
   <type name="theme_novella">

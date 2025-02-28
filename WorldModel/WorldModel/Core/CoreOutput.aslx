@@ -952,6 +952,7 @@
         }
         count = count + 1
         if (count = listLength - 1) {
+          if (GetBoolean(game,"useoxfordcomma")) result = result + ","
           if (not IsRegexMatch("^\\W", lastjoiner)) result = result + " "
           result = result + lastjoiner + " "
         }

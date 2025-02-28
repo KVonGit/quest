@@ -224,6 +224,7 @@
       }
       count = count + 1
       if (count = listLength - 1) {
+        if (GetBoolean(game,"useoxfordcomma")) result = result + ","
         result = result + " " + preFinal + " "
       }
       else if (count < listLength) {
@@ -285,6 +286,7 @@
         result = result + GetDisplayNameLink(item, "exit")
         count = count + 1
         if (count = listLength - 1) {
+          if (GetBoolean(game,"useoxfordcomma")) result = result + ","
           result = result + " " + preFinal + " "
         }
         else if (count < listLength) {
