@@ -137,6 +137,14 @@
         msg ("[NothingToRepeat]")
       }
     }
+    else if (StartsWith (command, "*")) {
+      SuppressTurnscripts
+      msg ("")
+      msg (SafeXML (command))
+      msg ("Noted.")
+      // Added for Quest 5.8
+      FinishTurn
+    }
     else {
       // Check through all commands for any that match
       candidates = NewObjectList()
