@@ -67,7 +67,7 @@
     <autodescription_youcansee type="int">3</autodescription_youcansee>
     <autodescription_youcango type="int">4</autodescription_youcango>
     <autodescription_description type="int">2</autodescription_description>
-	  <autodescription_youarein_useprefix type="boolean"> false</autodescription_youarein_useprefix>
+	<autodescription_youarein_useprefix type="boolean">false</autodescription_youarein_useprefix>
     <autodescription_youarein_newline type="boolean">false</autodescription_youarein_newline>
     <autodescription_youcansee_newline type="boolean">false</autodescription_youcansee_newline>
     <autodescription_youcango_newline type="boolean">false</autodescription_youcango_newline>
