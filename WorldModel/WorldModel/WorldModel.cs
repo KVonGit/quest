@@ -39,7 +39,8 @@ namespace TextAdventures.Quest
         v530,
         v540,
         v550,
-        v580
+        v580,
+        v582
     }
 
     public class WorldModel : IASL, IASLDebug, IASLTimer

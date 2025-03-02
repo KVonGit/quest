@@ -11,9 +11,12 @@
     <link rel="Stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/themes/redmond/jquery-ui.css" />
     <link rel="Stylesheet" type="text/css" href="../playercore.css" />
     <link rel="Stylesheet" type="text/css" href="player.css" />
+    <link rel="Stylesheet" type="text/css" href="../DevMode/tabulator.css" />
     <script type="text/javascript" src="../playercore.js"></script>
     <script type="text/javascript" src="../player.js"></script>
     <script type="text/javascript" src="playermobile.js"></script>
+    <script type="text/javascript" src="../DevMode/debugtable.js"></script>
+    <script type="text/javascript" src="../DevMode/tabulator.min.js"></script>
 </head>
 <body onload="init('<%= ApiRoot() %>', '<%= GameSessionLogId() %>');">
     <div id="dialog" title="Menu">

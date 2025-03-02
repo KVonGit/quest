@@ -96,9 +96,7 @@
   // MARK: Include debug table
   Files required for DevMode
   ****************************************************************************************************
-  -->
-
-  <!--
+ 
   ****************************************************************************************************
   // MARK: devmode_commands
   The commands are processed here
@@ -566,6 +564,11 @@
         }
         if (game.devmode_setverbs) {
           setVerbs
+        }
+         if (game.devmode_showdebugtable) {
+          JS.initDebugTable ("DevMode/tabulator.css")
+          msg("")
+          DevModeOutput (Template("DevModeInitDegugTable"))
         }
         if (game.devmode_setinitscript and HasScript(game, "devmode_initscript")) {
           msg("")

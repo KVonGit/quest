@@ -12,9 +12,12 @@
     <link rel="Stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.1/themes/redmond/jquery-ui.min.css" />
     <link rel="Stylesheet" type="text/css" href="<%= CacheBuster("playercore.css") %>" />
     <link rel="Stylesheet" type="text/css" href="<%= CacheBuster("player.css") %>" />
+    <link rel="Stylesheet" type="text/css" href="<%= CacheBuster("DevMode/tabulator.css") %>" />
     <script type="text/javascript" src="<%= CacheBuster("playercore.js") %>"></script>
     <script type="text/javascript" src="<%= CacheBuster("player.js") %>"></script>
     <script type="text/javascript" src="<%= CacheBuster("playerweb.js") %>"></script>
+    <script type="text/javascript" src="<%= CacheBuster("DevMode/debugtable.js") %>"></script>
+    <script type="text/javascript" src="<%= CacheBuster("DevMode/tabulator.min.js") %>"></script>
     <script type="text/javascript" src="paper.js"></script>
     <script type="text/paperscript" src="<%= CacheBuster("grid.js") %>" canvas="gridCanvas"></script>
 </head>
