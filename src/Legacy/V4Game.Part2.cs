@@ -29,6 +29,7 @@ public partial class V4Game
         }
 
         _fileData = decryptedFile.ToString();
+        Console.WriteLine(_fileData);
         _currentRoom = GetNextChunk();
 
         // OBJECTS

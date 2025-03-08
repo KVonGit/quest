@@ -470,6 +470,7 @@ namespace QuestViva.Engine.GameLoader
                         if (value.Length > 0)
                         {
                             type = "string";
+                            value = value.ReplaceLineEndings("");
                         }
                         else
                         {

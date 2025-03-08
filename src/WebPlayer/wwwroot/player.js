@@ -32,9 +32,9 @@ function init(url, gameSessionLogId) {
     // TODO: Actually implement this properly
     // // TODO: Temporarily always showing Save button here - need to work out where the game gets
     // // saved (localStorage?), and if we implement server-side saving below
-    // $("#cmdSave").show();
+    $("#cmdSave").show();
 
-    if (apiRoot) {
+    /*if (apiRoot) {
         $.ajax({
             url: apiRoot + "games/cansave",
             success: function (result) {
@@ -46,7 +46,7 @@ function init(url, gameSessionLogId) {
                 withCredentials: true
             }
         });   
-    }
+    }*/
 
     if (gameSessionLogId) {
         $.ajax({
@@ -100,6 +100,8 @@ function showMenu(title, options, allowCancel) {
     var dialogOptions = {
         modal: true,
         autoOpen: false,
+        resizable: true, // I am new!
+        width: 'auto', // I am new!
         buttons: [{
             text: "Select",
             click: function () { dialogSelect(); }
@@ -162,8 +164,8 @@ function sendCommand(text, metadata) {
 }
 
 function ASLEvent(event, parameter) {
-    if (!canSendCommand) return false;
-    canSendCommand = false;
+    //if (!canSendCommand) return false;
+    //canSendCommand = false;
     // using setTimeout here to work around a double-submission race condition which seems to only affect Firefox,
     // even though we use "return false" to suppress submission of the form with the Enter key.
     window.setTimeout(async function () {
@@ -222,7 +224,23 @@ function saveGame() {
 }
 
 function saveGameResponse(data) {
-    addText("Saving game...<br/>");
+    function base64ToBytes(base64) {
+        const binString = atob(base64);
+        return Uint8Array.from(binString, (m) => m.codePointAt(0));
+    }
+    function bytesToBase64(bytes) {
+        const binString = Array.from(bytes, (byte) =>
+            String.fromCodePoint(byte),
+        ).join("");
+        return btoa(binString);
+    }
+
+    function byteArrayToBase64(bytes) {
+        const binString = bytes.join("");
+        return btoa(binString);
+    }
+
+    addTextAndScroll("Saving game...<br/>");
     if (apiRoot) {
         $.ajax({
             url: apiRoot + "games/save/?id=" + $_GET["id"],
@@ -248,7 +266,16 @@ function saveGameResponse(data) {
         });
     }
     else {
-        console.log("TODO: Save game", data);
+        //console.log("TODO: Save game", data);
+        let link = document.createElement('a');
+        link.download = gameName + '.quest-webplayer-save';
+        var blob;
+        let saveFileData = new TextDecoder().decode(data);
+        //console.log("data:", saveFileData);
+        blob = new Blob(["<?xml version=\"1.0\" ?><!--SAVE_GAME_ID-" + gameName + "--><!--SAVE_DATA_BEGINS-->" + saveFileData], {type: 'text/plain'});
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
 }
 
