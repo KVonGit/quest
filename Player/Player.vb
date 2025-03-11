@@ -232,6 +232,7 @@ Public Class Player
         m_initialised = False
         tmrTick.Enabled = False
         StopSound()
+        ctlPlayerHtml.InvokeScript("eval", "$('audio').remove();")
         If Me.IsHandleCreated Then
             BeginInvoke(Sub() ctlPlayerHtml.Finished())
         End If
