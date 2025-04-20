@@ -1,12 +1,14 @@
+#nullable enable
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using QuestViva.Common;
 
-namespace QuestViva.Common;
+namespace QuestViva.PlayerCore;
 
-public class TextAdventuresGameDataProvider(HttpClient client, string id) : IGameDataProvider
+public class TextAdventuresGameDataProvider(ITextAdventuresConfig config, HttpClient client, string id) : IGameDataProvider
 {
     private class ApiGame
     {
@@ -16,15 +18,15 @@ public class TextAdventuresGameDataProvider(HttpClient client, string id) : IGam
         public string? ResourceRoot { get; set; }
     }
     
-    private static string GetSourceGameUrl(ApiGame game)
+    private string GetSourceGameUrl(ApiGame game)
     {
         var gameFile = game.ASLVersion >= 500 ? "game.aslx" : Path.GetFileName(game.OnlineRef);
-        return $"https://textadventures.blob.core.windows.net/gameresources/{game.UniqueId}/{gameFile}";
+        return $"{config.GameResourceRoot}{game.UniqueId}/{gameFile}";
     }
     
     public async Task<GameData?> GetData()
     {
-        var gameApiResult = await client.GetFromJsonAsync<ApiGame>($"https://textadventures.co.uk/api/game/{id}");
+        var gameApiResult = await client.GetFromJsonAsync<ApiGame>($"{config.TextAdventuresApiRoot}game/{id}");
         
         if (gameApiResult == null)
         {
@@ -39,7 +41,7 @@ public class TextAdventuresGameDataProvider(HttpClient client, string id) : IGam
         var stream = await response.Content.ReadAsStreamAsync();
         var filename = response.RequestMessage!.RequestUri!.Segments.Last();
 
-        var data = new GameData(stream, url, filename, this)
+        var data = new GameData(stream, id, filename, this)
         {
             IsCompiled = true,
             ResourceRoot = gameApiResult.ResourceRoot

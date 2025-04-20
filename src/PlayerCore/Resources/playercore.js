@@ -138,7 +138,6 @@ function initPlayerUI() {
     const gamePanes = document.getElementById("gamePanes");
     const gameContent = document.getElementById("gameContent");
     const gamePanel = document.getElementById("gamePanel");
-    const gamePanelSpacer = document.getElementById("gamePanelSpacer");
     const gridPanel = document.getElementById("gridPanel");
     
     cmdShowPanes.addEventListener("click", function () {
@@ -182,7 +181,6 @@ function initPlayerUI() {
 
         const newPanelImageMaxHeight = `${(window.innerHeight - 30) * 0.5}px`;
         updatePanelImageMaxHeight(newPanelImageMaxHeight);
-        resetPanelHeight();
 
         wasWide = isWide;
     }
@@ -193,7 +191,7 @@ function initPlayerUI() {
         const gameBorder = document.getElementById("gameBorder");
         gameBorder.style.maxWidth = width + "px";
         
-        const status = document.getElementById("status");
+        const status = document.getElementById("qv-status");
         status.style.maxWidth = (width - 2) + "px";
 
         gameWidth = width;
@@ -227,16 +225,10 @@ function initPlayerUI() {
             }
         }
     };
-    
-    const resetPanelHeight = () => {
-        if (_showGrid) return;
-        gamePanelSpacer.style.height = gamePanel.offsetHeight + "px";
-    };
 
     window.setPanelHeight = function () {
         if (_showGrid) return;
         setTimeout(function () {
-            resetPanelHeight();
             scrollToEnd();
         }, 100);
     };
@@ -386,13 +378,13 @@ function uiHide(element) {
 function updateStatusVisibility() {
     var anyVisible = isElementVisible("#location") || isElementVisible("#cmdSave");
     if (anyVisible) {
-        $("#status").show();
+        $("#qv-status").show();
         $("#divOutput").css("margin-top", "20px");
         $("#gamePanes").css("top", "24px");
         $("#gridPanel").css("top", "32px");
         $("#gamePanel").css("top", "32px");
     } else {
-        $("#status").hide();
+        $("#qv-status").hide();
         $("#divOutput").css("margin-top", "0px");
         $("#gamePanes").css("top", "0px");
         $("#gridPanel").css("top", "0px");
@@ -1152,7 +1144,6 @@ function ShowGrid(height) {
     $("#gridPanel").height(height);
     $("#gridCanvas").prop("height", height);
     paper.view.viewSize.height = height;
-    $("#gamePanelSpacer").height(height);
 }
 
 
@@ -1163,6 +1154,9 @@ function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
+// TODO: Stop calling this function from Core.aslx, I don't think the core libraries should depend on or manipulate
+// interface details like this - at least not while playercore.htm is part of the runtime instead of being supplied
+// by the library.
 function setCss(element, cssString) {
   el = $(element);
   ary = cssString.split(";");

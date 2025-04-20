@@ -59,20 +59,29 @@ internal partial class GameLoader
     public async Task<bool> Load(GameData gameData, Stream? saveData)
     {
         Stream dataStream;
+        Stream gameDataScanStream;
 
         if (saveData != null)
         {
             dataStream = saveData;
+            gameDataScanStream = gameData.Data;
         }
         else
         {
             if (Path.GetExtension(gameData.Filename) == ".quest")
             {
                 dataStream = await LoadCompiledFile(gameData);
+                gameDataScanStream = gameData.Data;
             }
             else
             {
                 dataStream = gameData.Data;
+                // Because dataStream is gameData.Data, we'll need a _copy_ of this for ScanTemplates, otherwise we
+                // mess up the stream positions for parsing the XML.
+                gameDataScanStream = new MemoryStream();
+                await gameData.Data.CopyToAsync(gameDataScanStream);
+                dataStream.Seek(0, SeekOrigin.Begin);
+                gameDataScanStream.Seek(0, SeekOrigin.Begin);
             }
         }
 
@@ -121,7 +130,7 @@ internal partial class GameLoader
                 AddError("File must begin with an ASL element");
             }
 
-            LoadXml(gameData.Filename, reader);
+            LoadXml(gameDataScanStream, reader);
 
             reader.Close();
         }
@@ -164,7 +173,7 @@ internal partial class GameLoader
         return result.GameFile;
     }
 
-    private void LoadXml(string filename, XmlReader reader)
+    private void LoadXml(Stream scanStream, XmlReader reader)
     {
         var timer = System.Diagnostics.Stopwatch.StartNew();
 
@@ -177,7 +186,7 @@ internal partial class GameLoader
 
         if (!IsCompiledFile && _currentFile.Count == 0 && WorldModel.Version >= WorldModelVersion.v530)
         {
-            ScanForTemplates(filename);
+            ScanForTemplates(scanStream);
         }
 
         var data = new FileData
@@ -214,8 +223,6 @@ internal partial class GameLoader
 
         _currentFile.Pop();
         UpdateLoadStatus();
-            
-        System.Diagnostics.Debug.WriteLine($"Parsed {filename} in {timer.ElapsedMilliseconds}ms");
     }
 
     private void UpdateLoadStatus()
@@ -359,16 +366,13 @@ internal partial class GameLoader
         return result;
     }
 
-    private void ScanForTemplates(string filename)
+    private void ScanForTemplates(Stream stream)
     {
         // We only do one pass of a file, but this means that it's difficult for a game
         // file to override any templates specified in libraries. To allow for this, we
         // do a preliminary pass of the base .aslx file to scan for any template definitions,
         // then we add those and mark them as non-overwritable.
 
-        var timer = System.Diagnostics.Stopwatch.StartNew();
-
-        var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         XmlReader reader = new XmlTextReader(stream);
 
         var templateLoader = new TemplateLoader
@@ -385,8 +389,6 @@ internal partial class GameLoader
                 templateLoader.Load(reader, ref e);
             }
         }
-            
-        System.Diagnostics.Debug.WriteLine($"Scanned for templates in {filename} in {timer.ElapsedTicks}ms");
     }
 
     private class ImplicitTypes

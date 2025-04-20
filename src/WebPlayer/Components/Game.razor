@@ -3,6 +3,7 @@
 @using QuestViva.WebPlayer.Components.Debugger
 @using QuestViva.WebPlayer.Models
 @rendermode InteractiveServer
+@implements IDisposable
 @inject GameLauncher GameLauncher
 @inject IJSRuntime JS
 
@@ -14,8 +15,8 @@
     <link rel="Stylesheet" type="text/css" href="/res/lib/jquery-ui.min.css" />
     <link rel="Stylesheet" type="text/css" href="/res/playercore.css" />
     <script type="text/javascript" src="/res/playercore.js"></script>
-    <script type="text/javascript" src="player.js"></script>
-    <script type="text/javascript" src="playerweb.js"></script>
+    <script type="text/javascript" src="player.js?v=@VersionInfo.Version"></script>
+    <script type="text/javascript" src="playerweb.js?v=@VersionInfo.Version"></script>
     <script>
         function addPaperScript() {
             const gridJs = document.createElement("script");
@@ -31,7 +32,7 @@
     </script>
 </HeadContent>
 
-@if (gameDebug != null)
+@if (EnableDebug && gameDebug != null)
 {
     <Debugger Game="@gameDebug" OnRunWalkthrough="RunWalkthrough"></Debugger>
 }
@@ -43,6 +44,8 @@
 @code {
     [Parameter] public required IGameDataProvider GameDataProvider { get; set; }
     [Parameter] public required Func<GameData, IResourceUrlProvider> ResourceUrlProvider { get; set; }
+    [Parameter] public required bool EnableDebug { get; set; } = false;
+    [Parameter] public bool EnableSave { get; set; } = true;
     private static MarkupString UiHtml => (MarkupString) PlayerHelper.GetUiResourceString("playercore.htm");
     private Player? Player { get; set; } = null;
     private GameData? gameData;
@@ -90,12 +93,18 @@
         }
         
         await JS.InvokeVoidAsync("WebPlayer.initUI");
+
+        if (!EnableSave)
+        {
+            await JS.InvokeVoidAsync("WebPlayer.setCanSave", false);
+        }
+        
         var result = await Player.Initialise();
 
         if (result)
         {
             gameDebug = game as IGameDebug;
-            await JS.InvokeVoidAsync("WebPlayer.setCanDebug", gameDebug != null);
+            await JS.InvokeVoidAsync("WebPlayer.setCanDebug", EnableDebug && gameDebug != null);
             StateHasChanged();
         }
     }
@@ -112,4 +121,10 @@
         if (Player == null) return;
         await Player.RunWalkthrough(name);
     }
+
+    public void Dispose()
+    {
+        game?.Finish();
+    }
+
 }

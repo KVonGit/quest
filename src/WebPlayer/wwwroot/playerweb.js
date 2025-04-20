@@ -62,6 +62,14 @@ class WebPlayer {
         const cmdDebug = document.getElementById("cmdDebug");
         cmdDebug.style.display = value ? "initial" : "none";
     }
+
+    static setCanSave(value) {
+        const cmdSave = document.getElementById("cmdSave");
+        cmdSave.style.display = value ? "initial" : "none";
+        if (!value) {
+            window.saveGame = () => addText("Disabled");
+        }
+    }
     
     static setAnimateScroll(value) {
         _animateScroll = value;
@@ -70,6 +78,20 @@ class WebPlayer {
     static async sendCommand(command, tickCount, metadata) {
         await WebPlayer.dotNetHelper.invokeMethodAsync("UiSendCommandAsync", command, tickCount, metadata);
         canSendCommand = true;
+    }
+    
+    static runJs(scripts) {
+        // We need globalEval so that calls which add functions add them to the global scope.
+        // e.g. spondre evals strings like "function blah() { ... }" which need to be in the global scope so
+        // they can be called from subsequent evals.
+        const globalEval = window.eval;
+        for (const script of scripts) {
+            try {
+                globalEval(script);
+            } catch (e) {
+                console.error(e);
+            }
+        }
     }
 
     static async uiChoice(choice) {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using QuestViva.Common;
@@ -75,6 +75,8 @@ public class Player : IPlayerHelperUI
             {
                 if (args[i] is string str)
                 {
+                    // NOTE: Removing linebreaks shouldn't be necessary, but some existing games depend on this
+                    // happening. So if we want to change this, that would be a breaking change for a new ASL version.
                     args[i] = str.Replace("\n", "").Replace("\r", "");
                 }
             }
@@ -84,23 +86,31 @@ public class Player : IPlayerHelperUI
     
     private async Task ClearJavaScriptBuffer()
     {
-        while (JavaScriptBuffer.Count != 0)
-        {
-            var buffer = JavaScriptBuffer.ToArray();
-            JavaScriptBuffer.Clear();
+        var buffer = JavaScriptBuffer.ToArray();
+        JavaScriptBuffer.Clear();
+
+        var scripts = new List<string>();
         
-            foreach (var (identifier, args) in buffer)
+        foreach (var (identifier, args) in buffer)
+        {
+            // We previously simply called this here (in a try/catch):
+            // await JSRuntime.InvokeVoidAsync(identifier, args);
+            
+            // But we don't want lots of back and forth between the server and browser
+            // for every single JS call, as there can be lots (especially at the start
+            // of a game). So we batch them up into one Blazor JS call.
+            
+            if (identifier == "eval" && args is [string str])
             {
-                try
-                {
-                    await JSRuntime.InvokeVoidAsync(identifier, args);
-                }
-                catch (Exception ex)
-                {
-                    AddJavaScriptToBuffer("console.error", ex.Message);
-                }
+                // No point in eval-ing an eval
+                scripts.Add(str);
+                continue;
             }
+            var serializedArgs = string.Join(',', args?.Select(arg => JsonSerializer.Serialize(arg)) ?? []); 
+            scripts.Add($"{identifier}({serializedArgs})");
         }
+        
+        await JSRuntime.InvokeVoidAsync("WebPlayer.runJs", scripts);
     }
     
     private void RequestNextTimerTick(int seconds)
@@ -400,15 +410,13 @@ public class Player : IPlayerHelperUI
 
     private void RegisterExternalStylesheets()
     {
-        // TODO
+        var stylesheets = PlayerHelper.Game.GetExternalStylesheets();
+        if (stylesheets == null) return;
         
-        // var stylesheets = m_player.GetExternalStylesheets();
-        // if (stylesheets == null) return;
-        //
-        // foreach (var stylesheet in stylesheets)
-        // {
-        //     m_buffer.AddJavaScriptToBuffer("addExternalStylesheet", new StringParameter(stylesheet));
-        // }
+        foreach (var stylesheet in stylesheets)
+        {
+            AddJavaScriptToBuffer("addExternalStylesheet", stylesheet);
+        }
     }
     
     private async Task ClearBuffer()
