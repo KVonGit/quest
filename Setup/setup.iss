@@ -5,8 +5,8 @@
 AppName=Quest
 AppVersion={#QuestVersion}
 AppVerName=Quest {#QuestVersion}
-ArchitecturesAllowed=x64compatible
-ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x86
+ArchitecturesInstallIn64BitMode=
 AppCopyright=Copyright © 2025 Alex Warren, Andy Joel and contributors
 VersionInfoVersion={#QuestVersion}
 AppPublisher=Alex Warren
@@ -24,13 +24,14 @@ SolidCompression=yes
 PrivilegesRequired=admin
 ChangesAssociations=yes
 UsePreviousSetupType=no
+DisableDirPage=no
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\Quest\bin\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml,\x86\*"; DestDir: "{app}"; Flags: recursesubdirs
-Source: "..\Dependencies\VC_redist.x64.exe"; DestDir: "{tmp}"
+Source: "..\Quest\bin\x86\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml,\x86\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\Dependencies\VC_redist.x86.exe"; DestDir: "{tmp}"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -40,7 +41,7 @@ Name: "{group}\Quest"; Filename: "{app}\Quest.exe"
 Name: "{autodesktop}\Quest"; Filename: "{app}\Quest.exe"; Tasks: desktopicon; WorkingDir: {app}
 
 [Run]
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/quiet"; StatusMsg: "Installing components..."
 Filename: "{app}\Quest.exe"; Description: "Launch Quest"; Flags: nowait postinstall skipifsilent
 
 [Registry]
