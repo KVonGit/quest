@@ -100,3 +100,45 @@ function selectText(containerid) {
     sel.removeAllRanges();
     sel.addRange(range);
 }
+
+function writeGameState(key, value) {
+    UIEvent("WriteGameState", key + "___STATEDATA___" + value);
+}
+
+function readGameState(key) {
+    UIEvent("ReadGameState", key);
+}
+
+function onGameStateRead(key, value) {
+    // This function will be called when state is read
+    // Game scripts can override this to handle the response
+    if (typeof window.questGameStateCallback === 'function') {
+        window.questGameStateCallback(key, value);
+    }
+}
+
+/* EXAMPLE:
+
+// Save some state
+writeGameState("completed_tutorial", "true");
+writeGameState("highest_score", "1000");
+
+// Read state (asynchronous)
+window.questGameStateCallback = function(key, value) {
+    switch(key) {
+        case "completed_tutorial":
+            if (value === "true") {
+                // Skip tutorial
+            }
+            break;
+        case "highest_score":
+            var score = parseInt(value) || 0;
+            if (score > 1000) {
+                // Unlock bonus content
+            }
+            break;
+    }
+};
+readGameState("completed_tutorial");
+
+*/

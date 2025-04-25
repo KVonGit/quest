@@ -129,6 +129,14 @@ Public Class PlayerHTML
                 WriteToTranscript(args)
             Case "WriteToLog"
                 WriteToLog(args)
+            Case "WriteGameState"
+                If args.Contains("___STATEDATA___") Then
+                    Dim parts = args.Split(New String() {"___STATEDATA___"}, 2, StringSplitOptions.None)
+                    WriteGameState(parts(0), parts(1))
+                End If
+            Case "ReadGameState"
+                Dim value = ReadGameState(args)
+                InvokeScript("onGameStateRead", args, value)
         End Select
     End Sub
     Private Sub WriteToLog(data As String)
@@ -447,4 +455,31 @@ Public Class PlayerHTML
         InvokeScript("SetAnimateScroll", value)
     End Sub
 
+
+    Private Sub WriteGameState(key As String, value As String)
+        Dim statePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest GameState"
+        Dim gameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
+        gameName = gameName.Replace(".aslx", "")
+
+        ' Create directory if it doesn't exist
+        If Not System.IO.Directory.Exists(statePath) = True Then
+            System.IO.Directory.CreateDirectory(statePath)
+        End If
+
+        ' Create or update the state file
+        Dim stateFile = statePath + "\" + gameName + "-" + key + ".state"
+        My.Computer.FileSystem.WriteAllText(stateFile, value, False) ' False = overwrite
+    End Sub
+
+    Private Function ReadGameState(key As String) As String
+        Dim statePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\Quest GameState"
+        Dim gameName = Split(CurrentGame.Filename, "\")(Split(CurrentGame.Filename, "\").Length - 1)
+        gameName = gameName.Replace(".aslx", "")
+
+        Dim stateFile = statePath + "\" + gameName + "-" + key + ".state"
+        If System.IO.File.Exists(stateFile) Then
+            Return My.Computer.FileSystem.ReadAllText(stateFile)
+        End If
+        Return ""
+    End Function
 End Class
