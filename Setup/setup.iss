@@ -29,7 +29,7 @@ UsePreviousSetupType=no
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\Quest\bin\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml,\x86\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\Quest\bin\x86\Release\*.*"; Excludes: "*.vshost.*,*.pdb,\*.xml"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "..\Dependencies\VC_redist.x64.exe"; DestDir: "{tmp}"
 
 [Tasks]
