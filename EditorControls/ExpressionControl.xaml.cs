@@ -91,6 +91,7 @@ namespace TextAdventures.Quest.EditorControls
                     newTextBox.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
                     newTextBox.TextChanged += SimpleEditor_TextChanged;
                     newTextBox.LostFocus += SimpleEditor_LostFocus;
+                    newTextBox.SpellCheck.IsEnabled = true;
                     if (m_helper.ControlDefinition.GetBool("multiline"))
                     {
                         newTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
