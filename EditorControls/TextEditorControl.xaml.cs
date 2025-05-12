@@ -123,22 +123,22 @@ namespace TextAdventures.Quest.EditorControls
         {
             UpdateUndoRedoEnabled();
 
-            if (e.Text == "<")
-            {
-                m_completionWindow = new CompletionWindow(textEditor.TextArea);
-                dynamic data = m_completionWindow.CompletionList.CompletionData;
-                data.Add(new CompletionData("object"));
-                data.Add(new CompletionData("command"));
-                data.Add(new CompletionData("verb"));
-                data.Add(new CompletionData("exit"));
-                data.Add(new CompletionData("function"));
-                data.Add(new CompletionData("type"));
-                data.Add(new CompletionData("walkthrough"));
-                data.Add(new CompletionData("javascript"));
-                data.Add(new CompletionData("inherit"));
-                m_completionWindow.Show();
-                m_completionWindow.Closed += m_completionWindow_Closed;
-            }
+            //if (e.Text == "<")
+            //{
+               // m_completionWindow = new CompletionWindow(textEditor.TextArea);
+               // dynamic data = m_completionWindow.CompletionList.CompletionData;
+               // data.Add(new CompletionData("object"));
+               // data.Add(new CompletionData("command"));
+               // data.Add(new CompletionData("verb"));
+               // data.Add(new CompletionData("exit"));
+               // data.Add(new CompletionData("function"));
+               // data.Add(new CompletionData("type"));
+               // data.Add(new CompletionData("walkthrough"));
+               // data.Add(new CompletionData("javascript"));
+               // data.Add(new CompletionData("inherit"));
+               // m_completionWindow.Show();
+               // m_completionWindow.Closed += m_completionWindow_Closed;
+           // }
         }
 
         void m_completionWindow_Closed(object sender, EventArgs e)
@@ -149,15 +149,15 @@ namespace TextAdventures.Quest.EditorControls
 
         private void TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 0 && m_completionWindow != null)
-            {
-                if (!char.IsLetterOrDigit(e.Text[0]))
-                {
+            //if (e.Text.Length > 0 && m_completionWindow != null)
+            //{
+               // if (!char.IsLetterOrDigit(e.Text[0]))
+               // {
                     // Whenever a non-letter is typed while the completion window is open,
                     // insert the currently selected element.
-                    m_completionWindow.CompletionList.RequestInsertion(e);
-                }
-            }
+                   // m_completionWindow.CompletionList.RequestInsertion(e);
+                //}
+            //}
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
