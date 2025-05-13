@@ -174,13 +174,7 @@
         <caption>[EditorGameMultipleCommands]</caption>
         <attribute>multiplecommands</attribute>
       </control>
-    
-      <control>
-        <controltype>checkbox</controltype>
-        <caption>[EditorGameWriteLogToFile]</caption>
-        <attribute>writelogtofile</attribute>
-        <desktop/>
-      </control>
+
     </tab>
 
     
@@ -560,7 +554,6 @@
         <validvalues type="simplestringlist">Classic;Midnight;Nature;Vanilla;Black;Blood;Tranquil;Parchment</validvalues>
         <onlydisplayif>game.showpanes</onlydisplayif>
       </control>
-
 
       <control>
         <controltype>title</controltype>
