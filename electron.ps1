@@ -79,7 +79,16 @@ Pop-Location
 Write-Host ""
 Write-Host "Launching Quest Viva desktop app..."
 Write-Host ""
-# cd directly since electron needs "." to resolve to src/ElectronApp/package.json
 Push-Location src/ElectronApp
-npx electron .
+if ($Release) {
+    Write-Host "Creating release package..."
+    npm run dist
+} else {
+    Write-Host "Launching dev version..."
+    npx electron .
+}
+if ($LASTEXITCODE -ne 0) {
+    Pop-Location
+    exit $LASTEXITCODE
+}
 Pop-Location
