@@ -37,27 +37,44 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host ""
 Write-Host "Building AppShell..."
 if (-not (Test-Path src/AppShell/node_modules)) {
-    npm --prefix src/AppShell install
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    Push-Location src/AppShell
+    npm install
+    if ($LASTEXITCODE -ne 0) { 
+        Pop-Location
+        exit $LASTEXITCODE 
+    }
+    Pop-Location
 }
 $env:PUBLIC_SHOW_HOME = "true"
-npm --prefix src/AppShell run build
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Push-Location src/AppShell
+npm run build
+if ($LASTEXITCODE -ne 0) { 
+    Pop-Location
+    exit $LASTEXITCODE 
+}
+Pop-Location
 
 Write-Host ""
 Write-Host "Building ElectronApp..."
 if (-not (Test-Path src/ElectronApp/node_modules)) {
-    npm --prefix src/ElectronApp install
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    Push-Location src/ElectronApp
+    npm install
+    if ($LASTEXITCODE -ne 0) { 
+        Pop-Location
+        exit $LASTEXITCODE 
+    }
+    Pop-Location
 }
 if ($Release) {
     $env:WASM_CONFIG = "Release"
-    npm --prefix src/ElectronApp run build
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-} else {
-    npm --prefix src/ElectronApp run build
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
+Push-Location src/ElectronApp
+npm run build
+if ($LASTEXITCODE -ne 0) { 
+    Pop-Location
+    exit $LASTEXITCODE 
+}
+Pop-Location
 
 Write-Host ""
 Write-Host "Launching Quest Viva desktop app..."
