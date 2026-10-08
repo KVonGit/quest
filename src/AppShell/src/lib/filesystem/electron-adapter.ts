@@ -1,31 +1,7 @@
 import { isJunkAssetName, isLibraryFilename, type AssetInfo, type FileAdapter } from "./types";
+import { guessMimeType } from "./mime";
 
 const ASLX_FILTER = [{ name: "Quest game files", extensions: ["aslx"] }];
-
-// Mirrors PlayerHelper.cs's MimeTypes. window.electronApp.fs.readFile returns
-// raw bytes with no type info (unlike FSA's FileSystemFileHandle.getFile(),
-// which browsers auto-type from the OS) — without this, getAsset()'s Blob has
-// an empty type, WasmPlayer's data-URL resource protocol produces an untyped
-// data: URL, and <audio> (unlike <img>) rejects that with NotSupportedError.
-const MIME_TYPES: Record<string, string> = {
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".gif": "image/gif",
-    ".bmp": "image/bmp",
-    ".png": "image/png",
-    ".wav": "audio/wav",
-    ".mp3": "audio/mpeg",
-    ".ogg": "audio/ogg",
-    ".js": "application/javascript",
-    ".ttf": "application/font-woff",
-    ".svg": "image/svg+xml",
-};
-
-function guessMimeType(name: string): string {
-    const dot = name.lastIndexOf(".");
-    if (dot < 0) return "";
-    return MIME_TYPES[name.slice(dot).toLowerCase()] ?? "";
-}
 
 function basename(p: string): string {
     return p.split(/[\\/]/).pop() ?? p;
