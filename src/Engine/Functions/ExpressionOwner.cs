@@ -706,7 +706,11 @@ internal class ExpressionOwner(WorldModel worldModel)
         return _random.NextDouble();
     }
 
-    internal void SetRandomSeed(int seed) => _random = new Random(seed);
+    public int SetRandomSeed(int seed)
+    {
+        _random = new Random(seed);
+        return seed;
+    }
 
     public Task<object?> Eval(string? expression)
     {

@@ -870,6 +870,20 @@ public class ExpressionTests
     }
 
     [TestMethod]
+    public async Task TestSetRandomSeedFunction()
+    {
+        const int seed = 1234;
+        await _worldModel.EvaluateAsync($"SetRandomSeed({seed})");
+
+        var reference = new Random(seed);
+        (await RunExpression<int>("GetRandomInt(1, 1000000)"))
+            .ShouldBe(reference.Next(1, 1000001));
+
+        (await RunExpressionGeneric("GetRandomDouble()"))
+            .ShouldBe(reference.NextDouble());
+    }
+
+    [TestMethod]
     public async Task TestEvaluateAsyncReturnsExpressionValue()
     {
         (await _worldModel.EvaluateAsync("1 + 2")).ShouldBe(3);
